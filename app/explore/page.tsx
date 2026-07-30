@@ -93,15 +93,16 @@ export default function ExplorePage() {
               Explore
             </Link>
             <Link href="/ai-guide">AI Guide</Link>
+            <Link href="/trip-planner">Trip Planner</Link>
           </div>
           <div className="nav-actions">
             <Link className="sign-in" href="/#footer">
               Sign In
             </Link>
-            <a className="button button-small" href="#destination-search">
-              Start Exploring
+            <Link className="button button-small" href="/trip-planner">
+              Plan a Trip
               <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </div>
         </nav>
       </header>

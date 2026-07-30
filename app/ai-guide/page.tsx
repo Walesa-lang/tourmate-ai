@@ -103,13 +103,14 @@ export default function AiGuidePage() {
             <Link className="active" href="/ai-guide" aria-current="page">
               AI Guide
             </Link>
+            <Link href="/trip-planner">Trip Planner</Link>
           </div>
           <div className="nav-actions">
             <Link className="sign-in" href="/#footer">
               Sign In
             </Link>
-            <Link className="button button-small" href="/explore">
-              Start Exploring
+            <Link className="button button-small" href="/trip-planner">
+              Plan a Trip
               <span aria-hidden="true">→</span>
             </Link>
           </div>

@@ -79,13 +79,14 @@ export default function Home() {
             </a>
             <Link href="/explore">Explore</Link>
             <Link href="/ai-guide">AI Guide</Link>
+            <Link href="/trip-planner">Trip Planner</Link>
           </div>
           <div className="nav-actions">
             <a className="sign-in" href="#footer">
               Sign In
             </a>
-            <Link className="button button-small" href="/explore">
-              Start Exploring
+            <Link className="button button-small" href="/trip-planner">
+              Plan a Trip
               <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -127,10 +128,10 @@ export default function Home() {
                       placeholder="Search a city or destination"
                     />
                   </div>
-                  <button className="button plan-button" type="button">
+                  <Link className="button plan-button" href="/trip-planner">
                     Plan My Trip
                     <span aria-hidden="true">→</span>
-                  </button>
+                  </Link>
                 </div>
                 <div className="popular">
                   <span>Popular:</span>

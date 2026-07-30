@@ -92,7 +92,7 @@ export default function ExplorePage() {
             <Link className="active" href="/explore" aria-current="page">
               Explore
             </Link>
-            <Link href="/#ai-guide">AI Guide</Link>
+            <Link href="/ai-guide">AI Guide</Link>
           </div>
           <div className="nav-actions">
             <Link className="sign-in" href="/#footer">

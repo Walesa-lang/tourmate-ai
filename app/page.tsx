@@ -52,7 +52,7 @@ const features = [
 
 function Brand() {
   return (
-    <a className="brand" href="#home" aria-label="TourMate AI home">
+    <Link className="brand" href="/" aria-label="TourMate AI home">
       <span className="brand-mark" aria-hidden="true">
         <svg viewBox="0 0 28 28">
           <circle cx="14" cy="14" r="10.5" />
@@ -63,7 +63,7 @@ function Brand() {
       <span>
         TourMate <strong>AI</strong>
       </span>
-    </a>
+    </Link>
   );
 }
 
@@ -78,7 +78,7 @@ export default function Home() {
               Home
             </a>
             <Link href="/explore">Explore</Link>
-            <a href="#ai-guide">AI Guide</a>
+            <Link href="/ai-guide">AI Guide</Link>
           </div>
           <div className="nav-actions">
             <a className="sign-in" href="#footer">
@@ -223,7 +223,13 @@ export default function Home() {
                   </div>
                   <h3>{feature.title}</h3>
                   <p>{feature.description}</p>
-                  <Link href="/explore">
+                  <Link
+                    href={
+                      feature.title === "AI Travel Guide"
+                        ? "/ai-guide"
+                        : "/explore"
+                    }
+                  >
                     Learn more <span aria-hidden="true">→</span>
                   </Link>
                 </article>

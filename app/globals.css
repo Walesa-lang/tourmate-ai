@@ -1571,3 +1571,594 @@ h1 span {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* AI Travel Guide */
+.guide-page {
+  min-width: 0;
+  background: #f7fbff;
+}
+
+.guide-header {
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid rgb(220 232 243 / 85%);
+  background: rgb(255 255 255 / 92%);
+}
+
+.guide-intro {
+  position: relative;
+  overflow: hidden;
+  padding: 72px 0 132px;
+  background:
+    radial-gradient(circle at 18% 35%, rgb(217 239 255 / 85%), transparent 28%),
+    radial-gradient(circle at 84% 30%, rgb(202 246 239 / 75%), transparent 25%),
+    linear-gradient(117deg, #f9fcff, #effaff 52%, #effcf8);
+  text-align: center;
+}
+
+.guide-intro::before {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#8fc7dc 0.7px, transparent 0.7px);
+  background-size: 25px 25px;
+  content: "";
+  opacity: 0.13;
+}
+
+.guide-intro-content {
+  position: relative;
+  z-index: 2;
+}
+
+.guide-intro .eyebrow {
+  margin-bottom: 17px;
+}
+
+.guide-intro h1 {
+  max-width: 780px;
+  margin: 0 auto;
+  font-size: clamp(42px, 5vw, 64px);
+}
+
+.guide-intro h1::after {
+  display: block;
+  width: 100px;
+  height: 4px;
+  margin: 17px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), var(--turquoise));
+  content: "";
+}
+
+.guide-intro-content > p {
+  max-width: 740px;
+  margin: 22px auto 18px;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.preview-badge {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px;
+  border: 1px solid #f1d2a8;
+  border-radius: 999px;
+  background: #fff9ed;
+  color: #82501f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.preview-badge span {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f4a75d;
+  color: white;
+  font-family: Georgia, serif;
+}
+
+.guide-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.guide-orb-one {
+  top: 45px;
+  left: 7%;
+  width: 100px;
+  height: 100px;
+  background: rgb(64 160 236 / 10%);
+}
+
+.guide-orb-two {
+  right: 9%;
+  bottom: 38px;
+  width: 140px;
+  height: 140px;
+  background: rgb(18 184 172 / 10%);
+}
+
+.guide-workspace {
+  position: relative;
+  z-index: 3;
+  padding: 0 0 90px;
+}
+
+.guide-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  align-items: start;
+  gap: 24px;
+  margin-top: -82px;
+}
+
+.chat-panel,
+.trip-panel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dfebf5;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 22px 55px rgb(35 86 133 / 12%);
+}
+
+.chat-header {
+  display: flex;
+  min-height: 82px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.assistant-avatar {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--blue), var(--turquoise));
+  box-shadow: 0 9px 20px rgb(22 103 232 / 20%);
+}
+
+.assistant-avatar svg {
+  width: 25px;
+  fill: none;
+  stroke: white;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.chat-header h2,
+.trip-panel-heading h2 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 18px;
+  letter-spacing: -0.4px;
+}
+
+.chat-header p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  color: #677d93;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.chat-messages {
+  display: flex;
+  min-height: 500px;
+  flex-direction: column;
+  gap: 22px;
+  padding: 25px 22px;
+  background:
+    linear-gradient(rgb(249 252 255 / 92%), rgb(249 252 255 / 92%)),
+    radial-gradient(#8fc7dc 0.6px, transparent 0.6px);
+  background-size: auto, 22px 22px;
+}
+
+.message-row {
+  display: flex;
+  max-width: 78%;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.user-message {
+  align-self: flex-end;
+}
+
+.message-avatar {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 10px;
+  background: #dff6f3;
+  color: #0c8179;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.user-message .message-avatar {
+  background: #e5effd;
+  color: var(--blue-dark);
+}
+
+.message-content {
+  min-width: 0;
+}
+
+.message-content > span {
+  display: block;
+  margin: 0 5px 5px;
+  color: #71869a;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.user-message .message-content > span {
+  text-align: right;
+}
+
+.message-content p {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #deebf4;
+  border-radius: 6px 16px 16px;
+  background: white;
+  color: #3f5871;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.user-message .message-content p {
+  border-color: transparent;
+  border-radius: 16px 6px 16px 16px;
+  background: linear-gradient(135deg, var(--blue), #157be8);
+  color: white;
+}
+
+.chat-composer {
+  padding: 18px 22px 17px;
+  border-top: 1px solid var(--line);
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.suggestions button {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #cfe0f0;
+  border-radius: 999px;
+  background: #f8fbfe;
+  color: #355675;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.suggestions button:hover {
+  border-color: #89b8ea;
+  background: #eef6ff;
+}
+
+.message-form label {
+  display: block;
+  margin: 0 0 8px 3px;
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.message-input-row {
+  display: flex;
+  gap: 9px;
+}
+
+.message-input-row input {
+  min-width: 0;
+  min-height: 50px;
+  flex: 1;
+  padding: 0 15px;
+  border: 1px solid #d6e4f0;
+  border-radius: 11px;
+  background: #f9fbfd;
+  color: var(--navy);
+  font-size: 13px;
+}
+
+.message-input-row input::placeholder {
+  color: #7f92a6;
+}
+
+.send-button {
+  min-width: 104px;
+  min-height: 50px;
+  padding: 0 17px;
+  font-size: 13px;
+}
+
+.send-button svg {
+  width: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.preview-note {
+  margin: 9px 0 0;
+  color: #7b8ea1;
+  font-size: 10px;
+  text-align: center;
+}
+
+.trip-panel {
+  padding: 23px;
+}
+
+.trip-panel-heading > span {
+  color: #0b8c84;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.trip-panel-heading h2 {
+  margin-top: 5px;
+  font-size: 23px;
+}
+
+.trip-panel-heading p {
+  margin: 9px 0 0;
+  color: #71869a;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.trip-detail-list {
+  margin-top: 22px;
+}
+
+.trip-detail {
+  display: flex;
+  gap: 11px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.trip-detail-icon {
+  display: grid;
+  width: 37px;
+  height: 37px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 11px;
+  background: #edf5ff;
+}
+
+.trip-detail:nth-child(even) .trip-detail-icon {
+  background: #eaf8f6;
+}
+
+.trip-detail-icon svg {
+  width: 19px;
+  fill: none;
+  stroke: var(--blue);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.trip-detail:nth-child(even) .trip-detail-icon svg {
+  stroke: #0e9188;
+}
+
+.trip-detail h3 {
+  margin: 0 0 4px;
+  color: #60778e;
+  font-size: 10px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.trip-detail strong {
+  display: block;
+  color: var(--navy);
+  font-size: 12px;
+}
+
+.trip-detail p {
+  margin: 4px 0 0;
+  color: #8294a6;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.trip-tip {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px solid #f1dfc8;
+  border-radius: 13px;
+  background: #fffaf2;
+  color: #785632;
+}
+
+.trip-tip > span {
+  color: var(--orange);
+}
+
+.trip-tip p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.trip-tip strong {
+  display: block;
+  margin-bottom: 2px;
+  color: #62421e;
+  font-size: 11px;
+}
+
+@media (max-width: 960px) {
+  .guide-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .message-row {
+    max-width: 88%;
+  }
+}
+
+@media (max-width: 760px) {
+  .guide-header .nav {
+    flex-wrap: wrap;
+    padding: 12px 0;
+  }
+
+  .guide-header .nav-links {
+    display: flex;
+    width: 100%;
+    order: 3;
+    justify-content: space-around;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+
+  .guide-header .nav-links a {
+    min-height: 40px;
+    padding: 10px 8px;
+  }
+
+  .guide-header .nav-links .active::after {
+    bottom: 3px;
+  }
+
+  .guide-intro {
+    padding: 52px 0 112px;
+  }
+
+  .guide-layout {
+    grid-template-columns: 1fr;
+    margin-top: -67px;
+  }
+
+  .trip-panel {
+    grid-row: 2;
+  }
+
+  .trip-detail-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 22px;
+  }
+}
+
+@media (max-width: 520px) {
+  .guide-intro h1 {
+    font-size: clamp(38px, 12vw, 48px);
+  }
+
+  .guide-intro-content > p {
+    font-size: 14px;
+  }
+
+  .preview-badge {
+    align-items: flex-start;
+    border-radius: 13px;
+    font-size: 11px;
+    text-align: left;
+  }
+
+  .chat-header,
+  .chat-messages,
+  .chat-composer,
+  .trip-panel {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .chat-messages {
+    min-height: 0;
+    gap: 19px;
+  }
+
+  .message-row {
+    max-width: 100%;
+  }
+
+  .message-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .message-content p {
+    padding: 11px 12px;
+    font-size: 12px;
+  }
+
+  .suggestions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .suggestions button {
+    width: 100%;
+    min-height: 44px;
+    border-radius: 10px;
+    text-align: left;
+  }
+
+  .message-input-row {
+    flex-direction: column;
+  }
+
+  .message-input-row input,
+  .send-button {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .trip-detail-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1400px) {
+  .guide-layout {
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 28px;
+  }
+}

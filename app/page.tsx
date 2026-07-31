@@ -79,6 +79,7 @@ export default function Home() {
             </a>
             <Link href="/explore">Explore</Link>
             <Link href="/ai-guide">AI Guide</Link>
+            <Link href="/hotels">Hotels</Link>
             <Link href="/trip-planner">Trip Planner</Link>
           </div>
           <div className="nav-actions">

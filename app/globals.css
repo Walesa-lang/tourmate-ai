@@ -2300,9 +2300,12 @@ h1 span {
 .hotel-card { min-width: 0; overflow: hidden; border: 1px solid #dfe8f0; border-radius: 17px; background: white; box-shadow: 0 12px 32px rgb(35 86 133 / 8%); transition: transform 180ms ease, box-shadow 180ms ease; }
 .hotel-card:hover { box-shadow: 0 18px 40px rgb(35 86 133 / 13%); transform: translateY(-3px); }
 .hotel-image { position: relative; height: 190px; overflow: hidden; background: linear-gradient(#a9d9ed 0 58%, #d8b981 58%); }
-.hotel-image::before, .hotel-image::after { position: absolute; content: ""; }
-.hotel-image::before { right: 9%; bottom: 24px; width: 56%; height: 70px; border-radius: 5px 5px 0 0; background: #fff6e4; box-shadow: -34px 18px 0 #d8a667; }
-.hotel-image::after { right: 25%; bottom: 24px; width: 38px; height: 47px; border-radius: 20px 20px 0 0; background: #3b7592; box-shadow: 53px 8px 0 -8px #3b7592; }
+.hotel-image-fallback { position: absolute; inset: 0; overflow: hidden; }
+.hotel-image-fallback::before, .hotel-image-fallback::after { position: absolute; content: ""; }
+.hotel-image-fallback::before { right: 9%; bottom: 24px; width: 56%; height: 70px; border-radius: 5px 5px 0 0; background: #fff6e4; box-shadow: -34px 18px 0 #d8a667; }
+.hotel-image-fallback::after { right: 25%; bottom: 24px; width: 38px; height: 47px; border-radius: 20px 20px 0 0; background: #3b7592; box-shadow: 53px 8px 0 -8px #3b7592; }
+.hotel-photo { z-index: 2; object-fit: cover; transition: transform 350ms ease; }
+.hotel-card:hover .hotel-photo { transform: scale(1.025); }
 .hotel-sun { position: absolute; top: 23px; right: 24px; width: 38px; height: 38px; border-radius: 50%; background: #ffd478; box-shadow: 0 0 0 10px rgb(255 212 120 / 18%); }
 .hotel-landscape { position: absolute; right: -10%; bottom: -35px; left: -10%; height: 80px; border-radius: 50%; background: #719f75; }
 .hotel-scene-swakopmund, .hotel-scene-walvis { background: linear-gradient(#a9def0 0 52%, #4da5c5 52% 74%, #ebd29f 74%); }
@@ -2310,6 +2313,8 @@ h1 span {
 .hotel-scene-sossusvlei, .hotel-scene-desert { background: linear-gradient(#7ec5e5 0 55%, #de7d45 55%); }
 .hotel-scene-sossusvlei .hotel-landscape, .hotel-scene-desert .hotel-landscape { height: 105px; background: #c85e36; transform: rotate(-7deg); }
 .property-type { position: absolute; z-index: 4; top: 14px; left: 14px; padding: 6px 9px; border-radius: 999px; background: rgb(255 255 255 / 91%); color: var(--navy); font-size: 9px; font-weight: 800; }
+.sample-listing { position: absolute; z-index: 4; right: 14px; bottom: 12px; padding: 6px 9px; border: 1px solid rgb(255 255 255 / 42%); border-radius: 999px; background: rgb(16 47 86 / 78%); box-shadow: 0 4px 14px rgb(16 47 86 / 18%); color: white; font-size: 8px; font-weight: 750; letter-spacing: .15px; backdrop-filter: blur(5px); }
+.fallback-message { position: absolute; z-index: 2; right: 0; bottom: 67px; left: 0; color: var(--navy); font-size: 10px; font-weight: 800; text-align: center; }
 .hotel-card-body { padding: 18px; }
 .hotel-card-top { display: flex; align-items: center; justify-content: space-between; gap: 9px; }
 .hotel-location { margin: 0; color: #0b8c84; font-size: 10px; font-weight: 750; }

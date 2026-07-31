@@ -80,6 +80,7 @@ export default function Home() {
             <Link href="/explore">Explore</Link>
             <Link href="/ai-guide">AI Guide</Link>
             <Link href="/hotels">Hotels</Link>
+            <Link href="/attractions">Attractions</Link>
             <Link href="/trip-planner">Trip Planner</Link>
           </div>
           <div className="nav-actions">

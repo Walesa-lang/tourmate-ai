@@ -2519,3 +2519,24 @@ h1 span {
 @media (prefers-reduced-motion: reduce) {
   .planner-spinner { animation-duration: 1.8s; }
 }
+
+/* Shared multilingual selector */
+.language-selector { display: flex; min-width: 132px; min-height: 42px; align-items: center; gap: 7px; padding: 0 9px; border: 1px solid #d4e2ed; border-radius: 10px; background: #fff; color: var(--navy); font-size: 10px; font-weight: 750; }
+.language-icon { display: grid; width: 23px; height: 23px; flex: 0 0 auto; place-items: center; border-radius: 7px; background: #eaf3ff; color: var(--blue); font-size: 11px; }
+.language-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.language-selector select { min-width: 0; width: 86px; min-height: 40px; padding: 0 22px 0 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.language-selector select:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+@media (max-width: 1180px) { .nav > .language-selector { min-width: 112px; } .nav > .language-selector select { width: 69px; } }
+@media (max-width: 820px) {
+  .nav > .language-selector { order: 2; min-width: 128px; min-height: 44px; margin-left: auto; }
+  .nav > .language-selector select { width: 84px; min-height: 42px; }
+  .nav-links { overflow-wrap: anywhere; }
+  .button, button, select, input { max-width: 100%; }
+  .feature-card, .explore-card, .hotel-card, .attraction-card, .planner-form-card, .planner-state-card { overflow-wrap: anywhere; }
+}
+@media (max-width: 390px) {
+  .nav > .brand { font-size: 17px; }
+  .nav > .brand .brand-mark { width: 32px; height: 32px; }
+  .nav > .language-selector { min-width: 108px; padding: 0 6px; }
+  .nav > .language-selector select { width: 68px; font-size: 9px; }
+}

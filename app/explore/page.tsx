@@ -98,7 +98,7 @@ export default function ExplorePage() {
             <Link href="/trip-planner">Trip Planner</Link>
           </div>
           <div className="nav-actions">
-            <Link className="sign-in" href="/#footer">
+            <Link className="sign-in" href="/sign-in">
               Sign In
             </Link>
             <Link className="button button-small" href="/trip-planner">

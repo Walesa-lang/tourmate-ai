@@ -37,7 +37,7 @@ export default function TripPlannerPage() {
             <Link className="active" href="/trip-planner" aria-current="page">Trip Planner</Link>
           </div>
           <div className="nav-actions">
-            <Link className="sign-in" href="/#footer">Sign In</Link>
+            <Link className="sign-in" href="/sign-in">Sign In</Link>
             <a className="button button-small" href="#planner-form">Plan a Trip <span aria-hidden="true">→</span></a>
           </div>
         </nav>

@@ -84,9 +84,9 @@ export default function Home() {
             <Link href="/trip-planner">Trip Planner</Link>
           </div>
           <div className="nav-actions">
-            <a className="sign-in" href="#footer">
+            <Link className="sign-in" href="/sign-in">
               Sign In
-            </a>
+            </Link>
             <Link className="button button-small" href="/trip-planner">
               Plan a Trip
               <span aria-hidden="true">→</span>

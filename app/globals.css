@@ -1560,7 +1560,256 @@ h1 span {
   }
 }
 
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f7fbff 0%, #eff9ff 52%, #effcf8 100%);
+}
+
+.auth-header {
+  position: relative;
+  z-index: 2;
+  border-bottom: 1px solid rgb(205 223 242 / 75%);
+  background: rgb(255 255 255 / 72%);
+  backdrop-filter: blur(14px);
+}
+
+.auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #3d5570;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.auth-back-link:hover {
+  color: var(--blue);
+}
+
+.auth-main {
+  position: relative;
+  display: grid;
+  min-height: calc(100vh - 87px);
+  place-items: center;
+  overflow: hidden;
+  padding: 56px 24px;
+}
+
+.auth-main::before {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#8fc7dc 0.7px, transparent 0.7px);
+  background-size: 25px 25px;
+  content: "";
+  opacity: 0.12;
+}
+
+.auth-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.auth-orb-one {
+  top: 8%;
+  left: 5%;
+  width: 240px;
+  height: 240px;
+  background: rgb(18 184 172 / 13%);
+}
+
+.auth-orb-two {
+  right: 3%;
+  bottom: 7%;
+  width: 310px;
+  height: 310px;
+  background: rgb(22 103 232 / 10%);
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 520px);
+  padding: 42px;
+  border: 1px solid rgb(205 223 242 / 90%);
+  border-radius: 24px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 28px 70px rgb(16 47 86 / 13%);
+}
+
+.auth-heading {
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.auth-heading .eyebrow {
+  justify-content: center;
+  margin: 0 auto 15px;
+}
+
+.auth-heading h1 {
+  margin: 0;
+  color: var(--navy);
+  font-size: clamp(30px, 5vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+
+.auth-heading p {
+  margin: 14px auto 0;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.auth-form,
+.auth-field {
+  display: grid;
+}
+
+.auth-form {
+  gap: 19px;
+}
+
+.auth-field {
+  gap: 8px;
+}
+
+.auth-field label {
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.auth-field input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 15px;
+  border: 1px solid #ccdced;
+  border-radius: 12px;
+  background: #fbfdff;
+  color: var(--navy);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.auth-field input::placeholder {
+  color: #91a1b2;
+}
+
+.auth-field input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgb(22 103 232 / 10%);
+  outline: none;
+}
+
+.auth-field input:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.auth-field small {
+  color: #71859a;
+  font-size: 11px;
+}
+
+.auth-message {
+  padding: 12px 14px;
+  border: 1px solid;
+  border-radius: 11px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.auth-message-error {
+  border-color: #f4c5c5;
+  background: #fff4f4;
+  color: #a22525;
+}
+
+.auth-message-success {
+  border-color: #aee4d9;
+  background: #effcf8;
+  color: #087568;
+}
+
+.auth-submit {
+  min-height: 52px;
+  margin-top: 2px;
+}
+
+.auth-submit:disabled {
+  cursor: wait;
+  opacity: 0.75;
+  transform: none;
+}
+
+.auth-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgb(255 255 255 / 45%);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: auth-spin 700ms linear infinite;
+}
+
+@keyframes auth-spin {
+  to { transform: rotate(360deg); }
+}
+
+.auth-switch {
+  margin: 1px 0 0;
+  color: var(--text);
+  font-size: 13px;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: var(--blue);
+  font-weight: 750;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .auth-header .nav {
+    min-height: 70px;
+  }
+
+  .auth-header .brand {
+    font-size: 17px;
+  }
+
+  .auth-back-link {
+    font-size: 12px;
+  }
+
+  .auth-main {
+    min-height: calc(100vh - 71px);
+    align-items: start;
+    padding: 30px 15px;
+  }
+
+  .auth-card {
+    padding: 28px 20px;
+    border-radius: 19px;
+  }
+
+  .auth-heading {
+    margin-bottom: 25px;
+  }
+
+  .auth-heading h1 {
+    font-size: 30px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .auth-spinner {
+    animation-duration: 1.5s;
+  }
   html {
     scroll-behavior: auto;
   }

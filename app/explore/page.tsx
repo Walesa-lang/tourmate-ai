@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteNavigation } from "../components/site-navigation";
 
 export const metadata: Metadata = {
   title: "Explore Destinations | TourMate AI",
@@ -84,30 +85,7 @@ function Brand() {
 export default function ExplorePage() {
   return (
     <div className="site-shell explore-page">
-      <header className="explore-header">
-        <nav className="nav container" aria-label="Main navigation">
-          <Brand />
-          <div className="nav-links">
-            <Link href="/">Home</Link>
-            <Link className="active" href="/explore" aria-current="page">
-              Explore
-            </Link>
-            <Link href="/ai-guide">AI Guide</Link>
-            <Link href="/hotels">Hotels</Link>
-            <Link href="/attractions">Attractions</Link>
-            <Link href="/trip-planner">Trip Planner</Link>
-          </div>
-          <div className="nav-actions">
-            <Link className="sign-in" href="/sign-in">
-              Sign In
-            </Link>
-            <Link className="button button-small" href="/trip-planner">
-              Plan a Trip
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <SiteNavigation headerClassName="explore-header" />
 
       <main>
         <section className="explore-hero">

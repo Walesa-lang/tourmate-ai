@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteNavigation } from "../components/site-navigation";
 import HotelImage from "./hotel-image";
 
 export const metadata: Metadata = {
@@ -39,16 +40,7 @@ function Brand() {
 export default function HotelsPage() {
   return (
     <div className="site-shell hotels-page">
-      <header className="hotels-header">
-        <nav className="nav container" aria-label="Main navigation">
-          <Brand />
-          <div className="nav-links">
-            <Link href="/">Home</Link><Link href="/explore">Explore</Link><Link href="/ai-guide">AI Guide</Link>
-            <Link className="active" href="/hotels" aria-current="page">Hotels</Link><Link href="/attractions">Attractions</Link><Link href="/trip-planner">Trip Planner</Link>
-          </div>
-          <div className="nav-actions"><Link className="sign-in" href="/sign-in">Sign In</Link><Link className="button button-small" href="/trip-planner">Plan a Trip <span aria-hidden="true">→</span></Link></div>
-        </nav>
-      </header>
+      <SiteNavigation headerClassName="hotels-header" />
 
       <main>
         <section className="hotels-hero" aria-labelledby="hotels-title">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteNavigation } from "./components/site-navigation";
 
 const features = [
   {
@@ -70,30 +71,7 @@ function Brand() {
 export default function Home() {
   return (
     <div className="site-shell">
-      <header className="site-header">
-        <nav className="nav container" aria-label="Main navigation">
-          <Brand />
-          <div className="nav-links">
-            <a className="active" href="#home">
-              Home
-            </a>
-            <Link href="/explore">Explore</Link>
-            <Link href="/ai-guide">AI Guide</Link>
-            <Link href="/hotels">Hotels</Link>
-            <Link href="/attractions">Attractions</Link>
-            <Link href="/trip-planner">Trip Planner</Link>
-          </div>
-          <div className="nav-actions">
-            <Link className="sign-in" href="/sign-in">
-              Sign In
-            </Link>
-            <Link className="button button-small" href="/trip-planner">
-              Plan a Trip
-              <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <SiteNavigation headerClassName="site-header" />
 
       <main>
         <section className="hero" id="home">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SiteNavigation } from "../components/site-navigation";
 import TripPlanner from "./trip-planner";
 
 export const metadata: Metadata = {
@@ -25,23 +26,7 @@ function Brand() {
 export default function TripPlannerPage() {
   return (
     <div className="site-shell planner-page">
-      <header className="planner-header">
-        <nav className="nav container" aria-label="Main navigation">
-          <Brand />
-          <div className="nav-links">
-            <Link href="/">Home</Link>
-            <Link href="/explore">Explore</Link>
-            <Link href="/ai-guide">AI Guide</Link>
-            <Link href="/hotels">Hotels</Link>
-            <Link href="/attractions">Attractions</Link>
-            <Link className="active" href="/trip-planner" aria-current="page">Trip Planner</Link>
-          </div>
-          <div className="nav-actions">
-            <Link className="sign-in" href="/sign-in">Sign In</Link>
-            <a className="button button-small" href="#planner-form">Plan a Trip <span aria-hidden="true">→</span></a>
-          </div>
-        </nav>
-      </header>
+      <SiteNavigation headerClassName="planner-header" />
 
       <main>
         <section className="planner-hero" aria-labelledby="planner-title">

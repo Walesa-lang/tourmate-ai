@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import type { User } from "@supabase/supabase-js";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 const navigationLinks = [
   ["/", "Home"], ["/explore", "Explore"], ["/ai-guide", "AI Guide"],
@@ -15,24 +17,95 @@ function Brand() {
 
 export function SiteNavigation({ headerClassName }: { headerClassName: string }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = useMemo(() => createClient(), []);
   const [isOpen, setIsOpen] = useState(false);
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const menuId = useId();
+  const accountMenuId = useId();
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const accountButtonRef = useRef<HTMLButtonElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isOpen) return;
+    let isMounted = true;
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
+      setUser(session?.user ?? null);
+      if (!session?.user) setIsAccountOpen(false);
+      setIsAuthLoading(false);
+    });
+
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (!isMounted) return;
+      setUser(data.session?.user ?? null);
+      setAuthError(error ? "Unable to check your session." : null);
+      setIsAuthLoading(false);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  useEffect(() => {
+    if (!isOpen && !isAccountOpen) return;
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        setIsOpen(false);
-        toggleRef.current?.focus();
+        if (isAccountOpen) {
+          setIsAccountOpen(false);
+          accountButtonRef.current?.focus();
+        } else {
+          setIsOpen(false);
+          toggleRef.current?.focus();
+        }
+      }
+    }
+    function handlePointerDown(event: PointerEvent) {
+      if (isAccountOpen && !accountRef.current?.contains(event.target as Node)) {
+        setIsAccountOpen(false);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [isAccountOpen, isOpen]);
 
   const activeProps = (href: string) => pathname === href ? { className: "active", "aria-current": "page" as const } : {};
   const closeMenu = () => setIsOpen(false);
+  const userName = typeof user?.user_metadata?.full_name === "string" && user.user_metadata.full_name.trim()
+    ? user.user_metadata.full_name.trim()
+    : user?.email ?? "Account";
+  const firstName = userName.includes("@") ? userName : userName.split(/\s+/)[0];
+  const userEmail = user?.email ?? "Email unavailable";
+
+  async function handleSignOut() {
+    setIsSigningOut(true);
+    setAuthError(null);
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      setAuthError("Unable to sign out. Please try again.");
+      setIsSigningOut(false);
+      return;
+    }
+
+    setUser(null);
+    setIsSigningOut(false);
+    setIsAccountOpen(false);
+    closeMenu();
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header className={headerClassName}>
@@ -42,7 +115,30 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
           {navigationLinks.map(([href, label]) => <Link key={href} href={href} {...activeProps(href)}>{label}</Link>)}
         </div>
         <div className="nav-actions">
-          <Link className="sign-in" href="/sign-in">Sign In</Link>
+          {isAuthLoading ? (
+            <span className="nav-auth-loading" role="status"><span className="nav-auth-skeleton" aria-hidden="true" /><span className="sr-only">Checking sign-in status</span></span>
+          ) : user ? (
+            <div className="account-menu" ref={accountRef}>
+              <button ref={accountButtonRef} className="account-menu-button" type="button" aria-label={`Open account menu for ${userName}`} aria-expanded={isAccountOpen} aria-controls={accountMenuId} aria-haspopup="menu" onClick={() => setIsAccountOpen((open) => !open)}>
+                <span className="account-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg></span>
+                <span className="account-greeting">Hi, {firstName}</span>
+                <svg className="account-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </button>
+              <div id={accountMenuId} className={`account-dropdown${isAccountOpen ? " is-open" : ""}`} role="menu" aria-label="Your account">
+                <div className="account-details">
+                  <span className="account-dropdown-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg></span>
+                  <div><strong>{userName}</strong><span>{userEmail}</span></div>
+                </div>
+                <button className="account-sign-out" type="button" role="menuitem" onClick={handleSignOut} disabled={isSigningOut}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>
+                  {isSigningOut ? "Signing out…" : "Sign Out"}
+                </button>
+                {authError && <p className="account-auth-error" role="alert">{authError}</p>}
+              </div>
+            </div>
+          ) : (
+            <Link className="sign-in" href="/sign-in">Sign In</Link>
+          )}
           <Link className="button button-small" href="/trip-planner">Plan a Trip <span aria-hidden="true">→</span></Link>
         </div>
         <button ref={toggleRef} className={`mobile-menu-toggle${isOpen ? " is-open" : ""}`} type="button" aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isOpen} aria-controls={menuId} onClick={() => setIsOpen((open) => !open)}>
@@ -52,10 +148,28 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
           <div className="mobile-menu-links">
             {navigationLinks.map(([href, label]) => <Link key={href} href={href} onClick={closeMenu} {...activeProps(href)}>{label}</Link>)}
           </div>
+          {user && !isAuthLoading && (
+            <section className="mobile-account" aria-labelledby={`${accountMenuId}-mobile-title`}>
+              <p id={`${accountMenuId}-mobile-title`} className="mobile-account-label">Your account</p>
+              <div className="mobile-account-identity">
+                <span className="mobile-account-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg></span>
+                <div><strong>{userName}</strong><span>{userEmail}</span></div>
+              </div>
+              <button className="mobile-account-sign-out" type="button" onClick={handleSignOut} disabled={isSigningOut}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>
+                {isSigningOut ? "Signing out…" : "Sign Out"}
+              </button>
+            </section>
+          )}
           <div className="mobile-menu-actions">
-            <Link className="mobile-sign-in" href="/sign-in" onClick={closeMenu}>Sign In</Link>
+            {isAuthLoading ? (
+              <span className="mobile-auth-loading" role="status"><span className="nav-auth-skeleton" aria-hidden="true" /><span className="sr-only">Checking sign-in status</span></span>
+            ) : !user ? (
+              <Link className="mobile-sign-in" href="/sign-in" onClick={closeMenu}>Sign In</Link>
+            ) : null}
             <Link className="button mobile-plan-trip" href="/trip-planner" onClick={closeMenu}>Plan a Trip <span aria-hidden="true">→</span></Link>
           </div>
+          {authError && <p className="nav-auth-error" role="alert">{authError}</p>}
         </div>
       </nav>
     </header>

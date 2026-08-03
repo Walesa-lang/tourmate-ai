@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 
-type AuthFormProps = { mode: "sign-in" | "sign-up" };
+type AuthFormProps = { mode: "sign-in" | "sign-up"; redirectTo?: string };
 type FormStatus = { type: "error" | "success"; message: string } | null;
 
-export function AuthForm({ mode }: AuthFormProps) {
+export function AuthForm({ mode, redirectTo = "/" }: AuthFormProps) {
   const router = useRouter();
   const isSignUp = mode === "sign-up";
   const [loading, setLoading] = useState(false);
@@ -54,9 +54,9 @@ export function AuthForm({ mode }: AuthFormProps) {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        setStatus({ type: "success", message: "Signed in successfully. Taking you home…" });
+        setStatus({ type: "success", message: "Signed in successfully. Taking you to your destination…" });
         router.refresh();
-        window.setTimeout(() => router.push("/"), 900);
+        window.setTimeout(() => router.push(redirectTo), 900);
       }
     } catch (error) {
       setStatus({

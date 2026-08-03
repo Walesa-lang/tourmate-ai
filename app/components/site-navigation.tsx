@@ -129,6 +129,10 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
                   <span className="account-dropdown-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg></span>
                   <div><strong>{userName}</strong><span>{userEmail}</span></div>
                 </div>
+                <Link className="account-dashboard-link" href="/dashboard" role="menuitem" onClick={() => setIsAccountOpen(false)}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" /></svg>
+                  Dashboard
+                </Link>
                 <button className="account-sign-out" type="button" role="menuitem" onClick={handleSignOut} disabled={isSigningOut}>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>
                   {isSigningOut ? "Signing out…" : "Sign Out"}
@@ -155,6 +159,10 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
                 <span className="mobile-account-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg></span>
                 <div><strong>{userName}</strong><span>{userEmail}</span></div>
               </div>
+              <Link className="mobile-account-dashboard" href="/dashboard" onClick={closeMenu}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" /></svg>
+                Dashboard
+              </Link>
               <button className="mobile-account-sign-out" type="button" onClick={handleSignOut} disabled={isSigningOut}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>
                 {isSigningOut ? "Signing out…" : "Sign Out"}

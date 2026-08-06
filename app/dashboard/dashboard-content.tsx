@@ -1,6 +1,11 @@
 import Link from "next/link";
 
-type DashboardContentProps = { fullName: string; email: string; greetingName: string };
+type DashboardContentProps = {
+  fullName: string;
+  email: string;
+  greetingName: string;
+  plan: "free" | "plus" | "premium";
+};
 type IconName = "trip" | "hotel" | "attraction" | "plan" | "user";
 
 function DashboardIcon({ name }: { name: IconName }) {
@@ -22,12 +27,13 @@ function EmptyCollection({ icon, title, description, action, href }: { icon: Ico
   );
 }
 
-export function DashboardContent({ fullName, email, greetingName }: DashboardContentProps) {
+export function DashboardContent({ fullName, email, greetingName, plan }: DashboardContentProps) {
+  const planName = `${plan.charAt(0).toUpperCase()}${plan.slice(1)}`;
   const overview = [
     { label: "Saved trips", value: "0", icon: "trip" as const },
     { label: "Favourite hotels", value: "0", icon: "hotel" as const },
     { label: "Favourite attractions", value: "0", icon: "attraction" as const },
-    { label: "Current plan", value: "Free", icon: "plan" as const },
+    { label: "Current plan", value: planName, icon: "plan" as const },
   ];
 
   return (
@@ -74,8 +80,9 @@ export function DashboardContent({ fullName, email, greetingName }: DashboardCon
               <p className="dashboard-card-kicker">Your account</p>
               <h2 id="profile-title">{fullName ? "Manage profile" : "Complete your profile"}</h2>
               <dl className="dashboard-profile-details">
-                <div><dt>Name</dt><dd>{fullName || "Not added yet"}</dd></div>
+                <div><dt>Full name</dt><dd>{fullName || "Not added yet"}</dd></div>
                 <div><dt>Email</dt><dd>{email}</dd></div>
+                <div><dt>Current plan</dt><dd>{planName}</dd></div>
               </dl>
               <p className="dashboard-profile-note">Email editing is not available yet.</p>
               <button className="dashboard-secondary-button" type="button" disabled aria-describedby="profile-action-note">Profile editing coming soon</button>
@@ -84,7 +91,7 @@ export function DashboardContent({ fullName, email, greetingName }: DashboardCon
 
             <section className="dashboard-plan-card" aria-labelledby="plan-title">
               <span className="dashboard-plan-badge">Current plan</span>
-              <h2 id="plan-title">Free</h2>
+              <h2 id="plan-title">{planName}</h2>
               <p>Core trip planning tools are available on your current plan.</p>
               <button type="button" disabled>Upgrade — coming soon</button>
               <small>No payment processing is active.</small>

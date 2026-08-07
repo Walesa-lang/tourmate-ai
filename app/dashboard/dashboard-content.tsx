@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Database } from "@/utils/supabase/database.types";
 
 type SavedTrip = Pick<Database["public"]["Tables"]["saved_trips"]["Row"], "id" | "title" | "destination" | "start_date" | "end_date" | "travellers" | "budget" | "created_at">;
+type Favourite = Pick<Database["public"]["Tables"]["favourites"]["Row"], "id" | "item_type" | "item_id" | "item_snapshot" | "created_at">;
 
 type DashboardContentProps = {
   fullName: string;
@@ -9,6 +10,7 @@ type DashboardContentProps = {
   greetingName: string;
   plan: "free" | "plus" | "premium";
   savedTrips: SavedTrip[];
+  favourites: Favourite[];
 };
 type IconName = "trip" | "hotel" | "attraction" | "plan" | "user";
 
@@ -31,12 +33,49 @@ function EmptyCollection({ icon, title, description, action, href }: { icon: Ico
   );
 }
 
-export function DashboardContent({ fullName, email, greetingName, plan, savedTrips }: DashboardContentProps) {
+function snapshotValue(favourite: Favourite, key: string) {
+  const snapshot = favourite.item_snapshot;
+  if (!snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return "";
+  const value = snapshot[key];
+  return typeof value === "string" ? value : "";
+}
+
+function FavouriteCollection({ favourites, type }: { favourites: Favourite[]; type: "hotel" | "attraction" }) {
+  const href = type === "hotel" ? "/hotels" : "/attractions";
+  const icon = type;
+  if (favourites.length === 0) {
+    return <EmptyCollection icon={icon} title={type === "hotel" ? "No favourite hotels yet" : "No favourite attractions yet"} description={type === "hotel" ? "Hotels you favourite will appear here." : "Attractions you favourite will appear here."} action={type === "hotel" ? "Explore hotels" : "Explore attractions"} href={href} />;
+  }
+
+  return (
+    <div className="dashboard-favourite-list">
+      {favourites.map((favourite) => (
+        <article className="dashboard-favourite-item" key={favourite.id}>
+          <span className={`dashboard-favourite-icon dashboard-favourite-icon-${type}`}><DashboardIcon name={icon} /></span>
+          <div>
+            <p>{snapshotValue(favourite, type === "hotel" ? "type" : "category") || (type === "hotel" ? "Hotel" : "Attraction")}</p>
+            <h3>{snapshotValue(favourite, "name") || favourite.item_id}</h3>
+            <span>{snapshotValue(favourite, "location")}</span>
+            <div className="dashboard-favourite-meta">
+              {snapshotValue(favourite, "rating") && <small>★ {snapshotValue(favourite, "rating")}</small>}
+              {snapshotValue(favourite, "price") && <small>{snapshotValue(favourite, "price")}</small>}
+              {snapshotValue(favourite, "duration") && <small>{snapshotValue(favourite, "duration")}</small>}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export function DashboardContent({ fullName, email, greetingName, plan, savedTrips, favourites }: DashboardContentProps) {
   const planName = `${plan.charAt(0).toUpperCase()}${plan.slice(1)}`;
+  const favouriteHotels = favourites.filter((item) => item.item_type === "hotel");
+  const favouriteAttractions = favourites.filter((item) => item.item_type === "attraction");
   const overview = [
     { label: "Saved trips", value: String(savedTrips.length), icon: "trip" as const },
-    { label: "Favourite hotels", value: "0", icon: "hotel" as const },
-    { label: "Favourite attractions", value: "0", icon: "attraction" as const },
+    { label: "Favourite hotels", value: String(favouriteHotels.length), icon: "hotel" as const },
+    { label: "Favourite attractions", value: String(favouriteAttractions.length), icon: "attraction" as const },
     { label: "Current plan", value: planName, icon: "plan" as const },
   ];
 
@@ -89,12 +128,12 @@ export function DashboardContent({ fullName, email, greetingName, plan, savedTri
 
           <section className="dashboard-collection-card" aria-labelledby="favourite-hotels-title">
             <div className="dashboard-section-heading"><div><p>Places to stay</p><h2 id="favourite-hotels-title">Favourite hotels</h2></div></div>
-            <EmptyCollection icon="hotel" title="No favourite hotels yet" description="Your saved accommodation will appear here when favourites are available." action="Explore hotels" href="/hotels" />
+            <FavouriteCollection favourites={favouriteHotels} type="hotel" />
           </section>
 
           <section className="dashboard-collection-card" aria-labelledby="favourite-attractions-title">
             <div className="dashboard-section-heading"><div><p>Things to experience</p><h2 id="favourite-attractions-title">Favourite attractions</h2></div></div>
-            <EmptyCollection icon="attraction" title="No favourite attractions yet" description="Your saved experiences will appear here when favourites are available." action="Explore attractions" href="/attractions" />
+            <FavouriteCollection favourites={favouriteAttractions} type="attraction" />
           </section>
 
           <aside className="dashboard-sidebar" aria-label="Account and subscription">

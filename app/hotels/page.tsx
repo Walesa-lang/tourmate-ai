@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteNavigation } from "../components/site-navigation";
 import HotelImage from "./hotel-image";
+import { FavouriteButton, FavouritesProvider } from "../components/favourites";
 
 export const metadata: Metadata = {
   title: "Hotels & Accommodation in Namibia | TourMate AI",
@@ -25,6 +26,8 @@ const properties = [
   { name: "Sossus Dune Camp", location: "Sossusvlei", rating: "4.8", price: "N$2,780", type: "Campsite", scene: "sossusvlei", image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4", alt: "Tent pitched in a scenic landscape beneath an open sky", description: "Comfortable desert camping beneath star-filled skies near the iconic dunes of Sossusvlei.", amenities: ["Firepit", "Showers", "Guided tours"] },
   { name: "Desert Quiver Lodge", location: "Sossusvlei", rating: "4.7", price: "N$2,450", type: "Lodge", scene: "desert", image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2", alt: "Secluded holiday lodge and pool set in a rugged landscape", description: "Private chalets set against granite outcrops, with sweeping desert views and quiet evenings.", amenities: ["Air conditioning", "Pool", "Braai area"] },
 ];
+
+const favouriteId = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 function Brand() {
   return (
@@ -76,14 +79,15 @@ export default function HotelsPage() {
 
               <div className="hotel-results">
                 <div className="hotel-results-heading"><div><span>Handpicked in Namibia</span><h2 id="stay-heading">Places you&apos;ll love</h2><p>6 properties found</p></div><label htmlFor="sort-stays">Sort by<select id="sort-stays" name="sort" defaultValue="recommended"><option value="recommended">Recommended</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="rating">Highest rating</option></select></label></div>
-                <div className="hotel-grid">
+                <FavouritesProvider itemType="hotel" returnPath="/hotels"><div className="hotel-grid">
                   {properties.map((property) => (
                     <article className="hotel-card" key={property.name}>
+                      <FavouriteButton itemId={favouriteId(property.name)} itemName={property.name} snapshot={{ ...property }} />
                       <HotelImage src={property.image} alt={property.alt} propertyType={property.type} scene={property.scene} />
                       <div className="hotel-card-body"><div className="hotel-card-top"><p className="hotel-location">⌖ {property.location}, Namibia</p><span className="hotel-rating" aria-label={`${property.rating} out of 5 stars`}>★ {property.rating}</span></div><h3>{property.name}</h3><p className="hotel-description">{property.description}</p><ul className="amenity-list" aria-label="Amenities">{property.amenities.map((amenity) => <li key={amenity}>✓ {amenity}</li>)}</ul><div className="hotel-card-footer"><p><strong>{property.price}</strong><span>per night</span></p><a className="button hotel-details-button" href="#hotel-destination">View Details</a></div></div>
                     </article>
                   ))}
-                </div>
+                </div></FavouritesProvider>
               </div>
             </div>
           </div>

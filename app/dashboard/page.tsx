@@ -41,6 +41,16 @@ export default async function DashboardPage() {
     throw new Error("Unable to load the authenticated user's saved trips.");
   }
 
+  const { data: favourites, error: favouritesError } = await supabase
+    .from("favourites")
+    .select("id, item_type, item_id, item_snapshot, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (favouritesError) {
+    throw new Error("Unable to load the authenticated user's favourites.");
+  }
+
   const fullName = profile.full_name?.trim() ?? "";
   const email = user.email ?? "Email unavailable";
   const greetingName = fullName ? fullName.split(/\s+/)[0] : email;
@@ -54,6 +64,7 @@ export default async function DashboardPage() {
         greetingName={greetingName}
         plan={profile.plan}
         savedTrips={savedTrips}
+        favourites={favourites}
       />
     </div>
   );

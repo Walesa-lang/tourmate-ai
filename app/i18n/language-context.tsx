@@ -58,7 +58,7 @@ function translateTree(root: ParentNode, language: Language) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   let node: Node | null;
   while ((node = walker.nextNode())) {
-    if (node.parentElement?.closest(".language-selector, script, style")) continue;
+    if (node.parentElement?.closest(".language-selector, .translation-managed, script, style")) continue;
     const current = node.textContent ?? "";
     if (!originals.has(node)) originals.set(node, current);
     const original = originals.get(node) ?? current;
@@ -67,7 +67,7 @@ function translateTree(root: ParentNode, language: Language) {
     node.textContent = original.replace(clean, dictionary[clean]);
   }
   root.querySelectorAll?.<Element>("[placeholder], [aria-label], [title]").forEach((element) => {
-    if (element.closest(".language-selector")) return;
+    if (element.closest(".language-selector, .translation-managed")) return;
     let saved = attributeOriginals.get(element);
     if (!saved) { saved = new Map(); attributeOriginals.set(element, saved); }
     ["placeholder", "aria-label", "title"].forEach((attribute) => {

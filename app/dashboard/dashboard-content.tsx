@@ -1,10 +1,14 @@
 import Link from "next/link";
+import type { Database } from "@/utils/supabase/database.types";
+
+type SavedTrip = Pick<Database["public"]["Tables"]["saved_trips"]["Row"], "id" | "title" | "destination" | "start_date" | "end_date" | "travellers" | "budget" | "created_at">;
 
 type DashboardContentProps = {
   fullName: string;
   email: string;
   greetingName: string;
   plan: "free" | "plus" | "premium";
+  savedTrips: SavedTrip[];
 };
 type IconName = "trip" | "hotel" | "attraction" | "plan" | "user";
 
@@ -27,10 +31,10 @@ function EmptyCollection({ icon, title, description, action, href }: { icon: Ico
   );
 }
 
-export function DashboardContent({ fullName, email, greetingName, plan }: DashboardContentProps) {
+export function DashboardContent({ fullName, email, greetingName, plan, savedTrips }: DashboardContentProps) {
   const planName = `${plan.charAt(0).toUpperCase()}${plan.slice(1)}`;
   const overview = [
-    { label: "Saved trips", value: "0", icon: "trip" as const },
+    { label: "Saved trips", value: String(savedTrips.length), icon: "trip" as const },
     { label: "Favourite hotels", value: "0", icon: "hotel" as const },
     { label: "Favourite attractions", value: "0", icon: "attraction" as const },
     { label: "Current plan", value: planName, icon: "plan" as const },
@@ -61,7 +65,26 @@ export function DashboardContent({ fullName, email, greetingName, plan }: Dashbo
         <div className="dashboard-content-grid">
           <section className="dashboard-collection-card dashboard-trips-card" aria-labelledby="saved-trips-title">
             <div className="dashboard-section-heading"><div><p>Your journeys</p><h2 id="saved-trips-title">Recent and saved trips</h2></div><Link href="/trip-planner">Create a trip</Link></div>
-            <EmptyCollection icon="trip" title="No saved trips yet" description="Trips you save will appear here when trip storage is connected." action="Plan your first trip" href="/trip-planner" />
+            {savedTrips.length === 0 ? (
+              <EmptyCollection icon="trip" title="No saved trips yet" description="Trips you save in the Trip Planner will appear here." action="Plan your first trip" href="/trip-planner" />
+            ) : (
+              <div className="dashboard-trip-list">
+                {savedTrips.map((trip) => (
+                  <article className="dashboard-trip-item" key={trip.id}>
+                    <span className="dashboard-trip-icon"><DashboardIcon name="trip" /></span>
+                    <div className="dashboard-trip-copy">
+                      <p>{trip.destination}</p>
+                      <h3>{trip.title}</h3>
+                      <div className="dashboard-trip-meta">
+                        <span>{trip.start_date && trip.end_date ? `${trip.start_date} – ${trip.end_date}` : "Dates flexible"}</span>
+                        <span>{trip.travellers} {trip.travellers === 1 ? "traveller" : "travellers"}</span>
+                        {trip.budget && <span>{trip.budget.charAt(0).toUpperCase() + trip.budget.slice(1)}</span>}
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="dashboard-collection-card" aria-labelledby="favourite-hotels-title">

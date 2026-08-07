@@ -2589,6 +2589,9 @@ h1 span {
 .itinerary-actions .button span { padding: 3px 6px; border-radius: 999px; background: rgb(255 255 255 / 18%); font-size: 8px; }
 .secondary-button { border: 1px solid #cdddea; border-radius: 12px; background: white; color: #375674; cursor: pointer; font-weight: 750; }
 .save-message { margin: 12px 0 0; padding: 10px; border-radius: 9px; background: #eaf8f5; color: #08776f; font-size: 10px; text-align: center; }
+.save-message-success { border: 1px solid #bde5dc; }
+.save-message-error { border: 1px solid #efc4c4; background: #fff2f2; color: #a22525; }
+.itinerary-actions .button:disabled { cursor: wait; opacity: .72; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 /* Hotels and accommodation */
@@ -3506,6 +3509,15 @@ h1 span {
 .dashboard-empty-icon { width: 47px; height: 47px; border-radius: 14px; background: #e9f3ff; }
 .dashboard-empty-state h3 { margin: 13px 0 0; color: var(--navy); font-size: 14px; }
 .dashboard-empty-state p { max-width: 400px; margin: 7px 0 0; color: #74889b; font-size: 11px; line-height: 1.55; }
+.dashboard-trip-list { display: grid; gap: 10px; }
+.dashboard-trip-item { display: grid; min-width: 0; grid-template-columns: 46px minmax(0, 1fr); align-items: start; gap: 13px; padding: 16px; border: 1px solid #dce8f2; border-radius: 14px; background: linear-gradient(145deg, #fbfdff, #f7fbfe); }
+.dashboard-trip-icon { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 13px; background: #e7f2ff; color: var(--blue); }
+.dashboard-trip-icon svg { width: 22px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.dashboard-trip-copy { min-width: 0; }
+.dashboard-trip-copy > p { margin: 0 0 4px; color: #0b8c84; font-size: 9px; font-weight: 850; letter-spacing: .55px; text-transform: uppercase; overflow-wrap: anywhere; }
+.dashboard-trip-copy h3 { margin: 0; color: var(--navy); font-size: 15px; line-height: 1.35; overflow-wrap: anywhere; }
+.dashboard-trip-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.dashboard-trip-meta span { min-width: 0; padding: 6px 8px; border-radius: 999px; background: #edf4fa; color: #587189; font-size: 9px; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
 .dashboard-text-link { display: inline-flex; min-height: 44px; align-items: center; gap: 7px; margin-top: 7px; color: var(--blue); font-size: 11px; font-weight: 800; }
 .dashboard-text-link:hover { text-decoration: underline; }
 .dashboard-profile-card, .dashboard-plan-card { padding: 22px; }
@@ -3563,6 +3575,10 @@ h1 span {
   .dashboard-stat { min-height: 76px; }
   .dashboard-section-heading { align-items: flex-start; }
   .dashboard-empty-state { min-height: 205px; padding: 22px 12px; }
+  .dashboard-trip-item { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; padding: 13px 11px; }
+  .dashboard-trip-icon { width: 40px; height: 40px; }
+  .dashboard-trip-meta { align-items: stretch; flex-direction: column; }
+  .dashboard-trip-meta span { width: 100%; min-height: 34px; display: flex; align-items: center; border-radius: 8px; }
   .dashboard-error-card { padding: 28px 19px; }
   .dashboard-error-card > div { flex-direction: column; gap: 4px; }
   .dashboard-error-card .button, .dashboard-error-card > div a { width: 100%; justify-content: center; }

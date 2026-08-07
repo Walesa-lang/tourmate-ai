@@ -6,6 +6,8 @@ export const metadata: Metadata = { title: "Sign In | TourMate AI", description:
 
 export default async function SignInPage({ searchParams }: { searchParams: Promise<{ redirectTo?: string }> }) {
   const { redirectTo } = await searchParams;
-  const safeRedirect = redirectTo === "/dashboard" ? "/dashboard" : "/";
+  const safeRedirect = ["/dashboard", "/trip-planner"].includes(redirectTo ?? "")
+    ? redirectTo!
+    : "/";
   return <AuthShell eyebrow="Welcome back" title="Sign in to TourMate AI" description="Continue planning memorable journeys with your personal AI travel companion."><AuthForm mode="sign-in" redirectTo={safeRedirect} /></AuthShell>;
 }

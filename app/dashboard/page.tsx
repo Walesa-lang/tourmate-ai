@@ -31,6 +31,16 @@ export default async function DashboardPage() {
     throw new Error("Unable to load the authenticated user's profile.");
   }
 
+  const { data: savedTrips, error: savedTripsError } = await supabase
+    .from("saved_trips")
+    .select("id, title, destination, start_date, end_date, travellers, budget, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (savedTripsError) {
+    throw new Error("Unable to load the authenticated user's saved trips.");
+  }
+
   const fullName = profile.full_name?.trim() ?? "";
   const email = user.email ?? "Email unavailable";
   const greetingName = fullName ? fullName.split(/\s+/)[0] : email;
@@ -43,6 +53,7 @@ export default async function DashboardPage() {
         email={email}
         greetingName={greetingName}
         plan={profile.plan}
+        savedTrips={savedTrips}
       />
     </div>
   );

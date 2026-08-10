@@ -1,4 +1,8 @@
-import type { Language } from "../i18n/translations";
+import "server-only";
+
+import type { Language } from "@/app/i18n/translations";
+import { hotelProperties, type HotelProperty } from "@/app/hotels/catalogue";
+import type { AiGuideRequest, AiGuideServiceResponse } from "./contracts";
 
 export type DemoTopic = "emergency" | "hotel" | "attraction" | "transport" | "budget" | "namibia" | "planning" | "greeting" | "general";
 
@@ -13,11 +17,45 @@ const topicPatterns: Array<[DemoTopic, RegExp]> = [
   ["greeting", /^(hi|hello|hey|good (morning|afternoon|evening)|bonjour|salut|hola|buenas|ol[aá]|bom dia|boa tarde|你好|您好|嗨)[!,.\s]*$/i],
 ];
 
-export function detectDemoTopic(message: string): DemoTopic {
+function detectDemoTopic(message: string): DemoTopic {
   return topicPatterns.find(([, pattern]) => pattern.test(message))?.[0] ?? "general";
 }
 
-export const demoResponses: Record<DemoTopic, Record<Language, string>> = {
+type AccommodationDestination = "Etosha" | "Sossusvlei" | "Swakopmund" | "Windhoek";
+
+const accommodationDestinations: Array<[AccommodationDestination, RegExp]> = [
+  ["Etosha", /etosha|埃托沙/i],
+  ["Sossusvlei", /sossusvlei|sossus|苏丝斯黎/i],
+  ["Swakopmund", /swakopmund|斯瓦科普蒙德/i],
+  ["Windhoek", /windhoek|温得和克/i],
+];
+
+function detectAccommodationDestination(message: string) {
+  return accommodationDestinations.find(([, pattern]) => pattern.test(message))?.[0];
+}
+
+function formatProperties(properties: HotelProperty[], language: Language) {
+  return properties.map((property) => {
+    if (language === "fr") return `${property.name} — ${property.type}, note ${property.rating}, ${property.price} par nuit`;
+    if (language === "es") return `${property.name} — ${property.type}, valoración ${property.rating}, ${property.price} por noche`;
+    if (language === "pt") return `${property.name} — ${property.type}, avaliação ${property.rating}, ${property.price} por noite`;
+    if (language === "zh") return `${property.name} — ${property.type}，评分 ${property.rating}，每晚 ${property.price}`;
+    return `${property.name} — ${property.type}, rating ${property.rating}, ${property.price} per night`;
+  }).join("; ");
+}
+
+function getDestinationAccommodationResponse(destination: AccommodationDestination, language: Language) {
+  const listings = hotelProperties.filter((property) => property.location === destination);
+  const formattedListings = formatProperties(listings, language);
+
+  if (language === "fr") return `Près de ${destination}, le catalogue de démonstration TourMate propose : ${formattedListings}. Ces annonces, prix, notes et disponibilités sont des informations de démonstration ; confirmez les détails actuels et la disponibilité directement avant de réserver.`;
+  if (language === "es") return `Cerca de ${destination}, el catálogo de demostración de TourMate incluye: ${formattedListings}. Estos anuncios, precios, valoraciones y la disponibilidad son información de demostración; confirma los datos actuales y la disponibilidad directamente antes de reservar.`;
+  if (language === "pt") return `Perto de ${destination}, o catálogo de demonstração do TourMate inclui: ${formattedListings}. Estes anúncios, preços, avaliações e a disponibilidade são informações de demonstração; confirme os dados atuais e a disponibilidade diretamente antes de reservar.`;
+  if (language === "zh") return `${destination} 附近的 TourMate 演示目录包括：${formattedListings}。这些房源、价格、评分和空房情况均为演示信息；预订前请直接确认最新详情和空房情况。`;
+  return `Near ${destination}, the TourMate demo catalogue includes: ${formattedListings}. These listings, prices, ratings, and availability are demo information; confirm current details and availability directly before booking.`;
+}
+
+const demoResponses: Record<DemoTopic, Record<Language, string>> = {
   emergency: {
     en: "If you may be in immediate danger, move to a safe place if you can and contact local emergency authorities now. Ask a nearby hotel, guide, police officer, or trusted local person for direct help. Demo mode cannot verify your location or send assistance.",
     fr: "Si vous êtes peut-être en danger immédiat, mettez-vous en sécurité si possible et contactez maintenant les services d’urgence locaux. Demandez directement de l’aide à un hôtel, un guide, un policier ou une personne locale de confiance. Le mode démo ne peut ni vérifier votre position ni envoyer de secours.",
@@ -82,3 +120,27 @@ export const demoResponses: Record<DemoTopic, Record<Language, string>> = {
     zh: "我可以在演示模式下提供帮助。请补充目的地和一些背景信息，例如日期、预算、同行人数或最看重的内容，我会给出更有用的旅行建议。",
   },
 };
+
+export async function getAiGuideResponse(
+  request: AiGuideRequest,
+): Promise<AiGuideServiceResponse> {
+  const latestUserMessage = [...request.messages]
+    .reverse()
+    .find((message) => message.role === "user");
+
+  if (!latestUserMessage) {
+    throw new Error("A validated AI Guide request must contain a user message.");
+  }
+
+  const topic = detectDemoTopic(latestUserMessage.content);
+  const accommodationDestination = topic === "hotel"
+    ? detectAccommodationDestination(latestUserMessage.content)
+    : undefined;
+
+  return {
+    message: accommodationDestination
+      ? getDestinationAccommodationResponse(accommodationDestination, request.language)
+      : demoResponses[topic][request.language],
+    emergency: topic === "emergency",
+  };
+}

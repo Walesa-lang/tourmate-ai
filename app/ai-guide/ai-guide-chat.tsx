@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "../i18n/language-context";
 import { translations } from "../i18n/translations";
-import { demoResponses, detectDemoTopic } from "./demo-responses";
+import type { AiGuideErrorResponse, AiGuideMessage, AiGuideSuccessResponse } from "@/utils/ai-guide/contracts";
 
-type Message = { id: number; role: "user" | "assistant"; text: string; timestamp: number; emergency?: boolean };
+type Message = { id: number; role: "user" | "assistant"; text: string; timestamp: number; emergency?: boolean; error?: boolean };
 
 const WELCOME = "Hi! I’m your TourMate AI guide. Tell me where you are going—or what kind of trip you are dreaming about—and I’ll help you get started.";
 const suggestions = ["Plan a Namibia trip", "Find accommodation", "Recommend attractions", "Help with an emergency"];
@@ -23,7 +23,7 @@ export function AiGuideChat() {
   const [thinking, setThinking] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const messageId = useRef(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeRequestRef = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,38 +37,65 @@ export function AiGuideChat() {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages, thinking]);
 
-  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); }, []);
+  useEffect(() => () => activeRequestRef.current?.abort(), []);
 
-  function submitMessage(value: string) {
+  async function submitMessage(value: string) {
     const clean = value.trim();
-    if (!clean || thinking) return;
-    const topic = detectDemoTopic(clean);
+    if (!clean || activeRequestRef.current) return;
+
+    const controller = new AbortController();
+    activeRequestRef.current = controller;
     const userMessage: Message = { id: ++messageId.current, role: "user", text: clean, timestamp: getTimestamp() };
+    const conversation: AiGuideMessage[] = [...messages, userMessage]
+      .slice(-20)
+      .map((message) => ({ role: message.role, content: message.text }));
     setMessages((current) => [...current, userMessage]);
     setDraft("");
     setThinking(true);
     setAnnouncement(t("TourMate AI is thinking"));
 
-    timeoutRef.current = setTimeout(() => {
+    try {
+      const response = await fetch("/api/ai-guide", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ language, messages: conversation }),
+        signal: controller.signal,
+      });
+      const result = await response.json() as AiGuideSuccessResponse | AiGuideErrorResponse;
+      if (!response.ok || !("data" in result)) throw new Error("AI Guide request failed.");
+
       const reply: Message = {
         id: ++messageId.current,
         role: "assistant",
-        text: demoResponses[topic][language],
+        text: result.data.message,
         timestamp: getTimestamp(),
-        emergency: topic === "emergency",
+        emergency: result.data.emergency,
       };
       setMessages((current) => [...current, reply]);
-      setThinking(false);
       setAnnouncement(t("TourMate AI replied"));
-      timeoutRef.current = null;
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }, 1100);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setMessages((current) => [...current, {
+        id: ++messageId.current,
+        role: "assistant",
+        text: t("TourMate AI is temporarily unavailable. Please try again in a moment."),
+        timestamp: getTimestamp(),
+        error: true,
+      }]);
+      setAnnouncement(t("TourMate AI is temporarily unavailable. Please try again in a moment."));
+    } finally {
+      if (activeRequestRef.current === controller) {
+        activeRequestRef.current = null;
+        setThinking(false);
+        requestAnimationFrame(() => inputRef.current?.focus());
+      }
+    }
   }
 
   function clearConversation() {
     if (!window.confirm(t("Clear this conversation? This cannot be undone."))) return;
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = null;
+    activeRequestRef.current?.abort();
+    activeRequestRef.current = null;
     setThinking(false);
     setDraft("");
     setMessages([{ id: ++messageId.current, role: "assistant", text: t(WELCOME), timestamp: getTimestamp() }]);
@@ -98,7 +125,7 @@ export function AiGuideChat() {
                 <div className="message-content">
                   <div className="message-meta"><span>{message.role === "user" ? t("You") : "TourMate AI"}</span><time dateTime={new Date(message.timestamp).toISOString()}>{formatTime(message.timestamp)}</time></div>
                   {message.emergency && <div className="emergency-warning" role="alert"><strong>{t("Emergency warning")}</strong>{t("Contact local emergency authorities now. Do not rely only on TourMate AI.")}</div>}
-                  <p>{message.text}</p>
+                  <p role={message.error ? "alert" : undefined}>{message.text}</p>
                 </div>
                 {message.role === "user" && <div className="message-avatar" aria-hidden="true">{t("You")}</div>}
               </article>

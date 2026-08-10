@@ -125,6 +125,7 @@ const rows: Row[] = [
   ["Conversation messages", "Messages de la conversation", "Mensajes de la conversación", "Mensagens da conversa", "对话消息"],
   ["TourMate AI is thinking", "TourMate AI réfléchit", "TourMate AI está pensando", "TourMate AI está pensando", "TourMate AI 正在思考"],
   ["TourMate AI replied", "TourMate AI a répondu", "TourMate AI respondió", "TourMate AI respondeu", "TourMate AI 已回复"],
+  ["TourMate AI is temporarily unavailable. Please try again in a moment.", "TourMate AI est temporairement indisponible. Veuillez réessayer dans un instant.", "TourMate AI no está disponible temporalmente. Inténtalo de nuevo en un momento.", "O TourMate AI está temporariamente indisponível. Tente novamente em instantes.", "TourMate AI 暂时不可用，请稍后再试。"],
   ["Thinking…", "Réflexion…", "Pensando…", "Pensando…", "思考中…"],
   ["Plan a Namibia trip", "Planifier un voyage en Namibie", "Planificar un viaje a Namibia", "Planejar uma viagem à Namíbia", "规划纳米比亚之旅"],
   ["Find accommodation", "Trouver un hébergement", "Buscar alojamiento", "Encontrar hospedagem", "寻找住宿"],

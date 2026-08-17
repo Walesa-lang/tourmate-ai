@@ -102,6 +102,52 @@ export type Database = {
         };
         Relationships: [];
       };
+      businesses: {
+        Row: {
+          id: string;
+          owner_id: string;
+          business_name: string;
+          business_type: "accommodation" | "car_rental" | "tour_operator" | "restaurant" | "attraction" | "other";
+          description: string;
+          country: string;
+          city: string;
+          contact_name: string;
+          contact_email: string;
+          phone: string;
+          website_url: string | null;
+          status: "pending" | "approved" | "rejected";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id?: string;
+          business_name: string;
+          business_type: "accommodation" | "car_rental" | "tour_operator" | "restaurant" | "attraction" | "other";
+          description: string;
+          country: string;
+          city: string;
+          contact_name: string;
+          contact_email: string;
+          phone: string;
+          website_url?: string | null;
+          status?: "pending" | "approved" | "rejected";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          business_name?: string;
+          business_type?: "accommodation" | "car_rental" | "tour_operator" | "restaurant" | "attraction" | "other";
+          description?: string;
+          country?: string;
+          city?: string;
+          contact_name?: string;
+          contact_email?: string;
+          phone?: string;
+          website_url?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

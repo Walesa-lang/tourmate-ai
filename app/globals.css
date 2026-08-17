@@ -51,6 +51,61 @@ select:focus-visible {
   outline-offset: 3px;
 }
 
+textarea:focus-visible { outline: 3px solid rgb(22 103 232 / 35%); outline-offset: 3px; }
+
+/* Business partner portal */
+.partner-page { min-width: 0; background: #f5f9fd; }
+.partner-main { flex: 1; }
+.partner-hero { padding: 62px 0 112px; background: radial-gradient(circle at 82% 15%, rgb(18 184 172 / 18%), transparent 28%), linear-gradient(120deg, #f7fbff, #edf7ff 55%, #edf9f6); text-align: center; }
+.partner-eyebrow, .partner-form-heading > p, .partner-status-heading p, .partner-status-guide > p, .partner-empty > p { margin: 0 0 9px; color: #0b8c84; font-size: 10px; font-weight: 850; letter-spacing: .75px; text-transform: uppercase; }
+.partner-hero h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); letter-spacing: -1.8px; }
+.partner-hero .container > p:last-child { max-width: 700px; margin: 16px auto 0; color: #587189; font-size: 14px; line-height: 1.7; }
+.partner-form-wrap, .partner-dashboard-wrap { position: relative; margin-top: -66px; padding-bottom: 90px; }
+.partner-form-card, .partner-status-card, .partner-status-guide, .partner-empty { border: 1px solid #dfebf5; border-radius: 20px; background: white; box-shadow: 0 20px 50px rgb(35 86 133 / 11%); }
+.partner-form-card { padding: 30px; }
+.partner-form-heading h2, .partner-status-heading h2, .partner-status-guide h2, .partner-empty h2 { margin: 0; font-size: 25px; letter-spacing: -.7px; }
+.partner-form-heading > span { display: block; margin-top: 8px; color: #778a9d; font-size: 11px; }
+.partner-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 27px; }
+.partner-field { min-width: 0; }
+.partner-field-wide { grid-column: 1 / -1; }
+.partner-field label { display: block; margin: 0 0 8px 2px; font-size: 12px; font-weight: 750; }
+.partner-field label span { color: #7b8da0; font-weight: 600; }
+.partner-field input, .partner-field select, .partner-field textarea { width: 100%; min-height: 49px; padding: 0 13px; border: 1px solid #d4e2ee; border-radius: 11px; background: #f9fbfd; color: var(--navy); font: inherit; font-size: 13px; }
+.partner-field textarea { min-height: 125px; padding-top: 13px; resize: vertical; }
+.partner-field input:focus, .partner-field select:focus, .partner-field textarea:focus { border-color: #76aae8; box-shadow: 0 0 0 3px rgb(22 103 232 / 10%); outline: 0; }
+.partner-field [aria-invalid="true"] { border-color: #c95a5a; }
+.partner-field > p, .partner-agreement-error, .partner-submit-error { margin: 6px 2px 0; color: #b63b3b; font-size: 11px; line-height: 1.4; }
+.partner-agreement { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 9px; margin-top: 24px; }
+.partner-agreement input { width: 44px; height: 44px; margin: 0; accent-color: var(--blue); cursor: pointer; }
+.partner-agreement label { font-size: 12px; font-weight: 700; line-height: 1.45; cursor: pointer; }
+.partner-submit { min-width: 210px; min-height: 50px; margin-top: 25px; padding: 0 23px; }
+.partner-submit:disabled { cursor: wait; opacity: .7; }
+.partner-dashboard-hero { padding-bottom: 102px; }
+.partner-success { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 18px; padding: 16px 19px; border: 1px solid #a9ded3; border-radius: 14px; background: #effbf7; color: #17695f; font-size: 12px; }
+.partner-success span { color: #4d756f; }
+.partner-status-card, .partner-status-guide { padding: 27px; }
+.partner-status-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.partner-status { display: inline-flex; min-height: 30px; align-items: center; padding: 0 11px; border-radius: 999px; font-size: 9px; font-weight: 850; letter-spacing: .5px; text-transform: uppercase; }
+.partner-status-pending { background: #fff4dc; color: #925c00; }
+.partner-status-approved { background: #e5f8f1; color: #08705a; }
+.partner-status-rejected { background: #ffeded; color: #a22525; }
+.partner-details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 24px 0 0; border-top: 1px solid var(--line); }
+.partner-details > div { min-width: 0; padding: 18px 16px 8px 0; }
+.partner-details dt { color: #7b8da0; font-size: 9px; font-weight: 800; letter-spacing: .45px; text-transform: uppercase; }
+.partner-details dd { margin: 6px 0 0; color: #36516b; font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
+.partner-edit { min-height: 46px; margin-top: 22px; padding: 0 20px; }
+.partner-status-guide { margin-top: 20px; }
+.partner-status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-top: 20px; }
+.partner-status-grid article { min-width: 0; padding: 18px; border: 1px solid #e1ebf3; border-radius: 14px; background: linear-gradient(145deg, #fbfdff, #f7fbfe); }
+.partner-status-grid h3 { margin: 13px 0 0; font-size: 14px; }
+.partner-status-grid p { margin: 7px 0 0; color: #6b8195; font-size: 11px; line-height: 1.55; }
+.partner-empty { display: flex; min-height: 390px; align-items: center; justify-content: center; flex-direction: column; padding: 38px 24px; text-align: center; }
+.partner-empty-icon { display: grid; width: 55px; height: 55px; place-items: center; margin-bottom: 17px; border-radius: 16px; background: #e8f8f5; color: #0b8c84; font-size: 24px; }
+.partner-empty > span:not(.partner-empty-icon) { max-width: 530px; margin-top: 11px; color: #6b8195; font-size: 13px; line-height: 1.6; }
+.partner-empty .button { min-height: 50px; margin-top: 24px; padding: 0 22px; }
+@media (max-width: 768px) { .partner-fields { grid-template-columns: 1fr; } .partner-field-wide { grid-column: auto; } .partner-details, .partner-status-grid { grid-template-columns: 1fr; } .partner-success { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 520px) { .partner-hero { padding: 44px 0 94px; } .partner-form-card, .partner-status-card, .partner-status-guide { padding: 18px 15px; border-radius: 16px; } .partner-form-wrap, .partner-dashboard-wrap { margin-top: -52px; } .partner-field input, .partner-field select, .partner-field textarea { font-size: 16px; } .partner-submit, .partner-edit, .partner-empty .button { width: 100%; } .partner-status-heading { flex-direction: column; } .partner-empty { min-height: 350px; padding: 28px 17px; } }
+
 .container {
   width: min(1160px, calc(100% - 48px));
   margin: 0 auto;
@@ -118,7 +173,7 @@ select:focus-visible {
 }
 
 .nav-links {
-  gap: 34px;
+  gap: 24px;
   margin-left: auto;
 }
 

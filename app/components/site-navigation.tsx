@@ -9,6 +9,7 @@ import { createClient } from "@/utils/supabase/client";
 const navigationLinks = [
   ["/", "Home"], ["/explore", "Explore"], ["/ai-guide", "AI Guide"],
   ["/hotels", "Hotels"], ["/attractions", "Attractions"], ["/trip-planner", "Trip Planner"],
+  ["/partner/dashboard", "Partner With Us"],
 ] as const;
 
 function Brand() {

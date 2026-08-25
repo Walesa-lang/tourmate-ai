@@ -5,11 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { PARTNERS_NAV_LABEL } from "@/app/i18n/translations";
 
 const navigationLinks = [
   ["/", "Home"], ["/explore", "Explore"], ["/ai-guide", "AI Guide"],
   ["/hotels", "Hotels"], ["/attractions", "Attractions"], ["/trip-planner", "Trip Planner"],
-  ["/partner/dashboard", "Partner With Us"],
+  ["/partner/dashboard", PARTNERS_NAV_LABEL],
 ] as const;
 
 function Brand() {
@@ -113,7 +114,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
       <nav className="nav container" aria-label="Main navigation">
         <Brand />
         <div className="nav-links">
-          {navigationLinks.map(([href, label]) => <Link key={href} href={href} {...activeProps(href)}>{label}</Link>)}
+          {navigationLinks.map(([href, label]) => <Link key={href} href={href} {...activeProps(href)}>{href === "/partner/dashboard" ? <span className="nav-partners">{label}</span> : label}</Link>)}
         </div>
         <div className="nav-actions">
           {isAuthLoading ? (

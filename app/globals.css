@@ -186,6 +186,10 @@ textarea:focus-visible { outline: 3px solid rgb(22 103 232 / 35%); outline-offse
   transition: color 160ms ease;
 }
 
+.nav-links .nav-partners {
+  white-space: nowrap;
+}
+
 .nav-links a:hover,
 .sign-in:hover {
   color: var(--blue);

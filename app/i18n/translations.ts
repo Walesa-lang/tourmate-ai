@@ -1,5 +1,6 @@
 export const languages = ["en", "fr", "es", "pt", "zh"] as const;
 export type Language = (typeof languages)[number];
+export const PARTNERS_NAV_LABEL = "Partners";
 
 export const languageNames: Record<Language, string> = {
   en: "English", fr: "Français", es: "Español", pt: "Português", zh: "简体中文",
@@ -8,7 +9,7 @@ export const languageNames: Record<Language, string> = {
 type Row = [string, string, string, string, string];
 const rows: Row[] = [
   ["Language", "Langue", "Idioma", "Idioma", "语言"],
-  ["Partner With Us", "Devenez partenaire", "Colabora con nosotros", "Seja nosso parceiro", "与我们合作"],
+  [PARTNERS_NAV_LABEL, "Partenaires", "Socios", "Parceiros", "合作伙伴"],
   ["Partner with TourMate AI", "Devenez partenaire de TourMate AI", "Colabora con TourMate AI", "Seja parceiro do TourMate AI", "与 TourMate AI 合作"],
   ["Grow your business with travellers", "Développez votre activité auprès des voyageurs", "Haz crecer tu negocio con viajeros", "Faça seu negócio crescer com viajantes", "与旅行者一起拓展业务"],
   ["Tell us about your business. Our team will review your application before it can become a TourMate AI partner.", "Présentez-nous votre entreprise. Notre équipe examinera votre demande avant toute intégration comme partenaire TourMate AI.", "Cuéntanos sobre tu negocio. Nuestro equipo revisará la solicitud antes de que pueda convertirse en socio de TourMate AI.", "Conte-nos sobre sua empresa. Nossa equipe analisará a candidatura antes que ela possa se tornar parceira do TourMate AI.", "请介绍您的企业。我们的团队会审核申请，通过后方可成为 TourMate AI 合作伙伴。"],

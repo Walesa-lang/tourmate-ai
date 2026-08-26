@@ -116,6 +116,9 @@ export type Database = {
           phone: string;
           website_url: string | null;
           status: "pending" | "approved" | "rejected";
+          rejection_reason: string | null;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -132,6 +135,9 @@ export type Database = {
           phone: string;
           website_url?: string | null;
           status?: "pending" | "approved" | "rejected";
+          rejection_reason?: string | null;
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -145,12 +151,63 @@ export type Database = {
           contact_email?: string;
           phone?: string;
           website_url?: string | null;
+          status?: "pending" | "approved" | "rejected";
+          rejection_reason?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_users: {
+        Row: {
+          user_id: string;
+          role: "admin";
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          role?: "admin";
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          role?: "admin";
+          created_by?: string | null;
+        };
+        Relationships: [];
+      };
+      business_application_reviews: {
+        Row: {
+          application_id: string;
+          decision: "approved" | "rejected";
+          internal_admin_note: string | null;
+          reviewed_by: string;
+          reviewed_at: string;
+        };
+        Insert: {
+          application_id: string;
+          decision: "approved" | "rejected";
+          internal_admin_note?: string | null;
+          reviewed_by: string;
+          reviewed_at?: string;
+        };
+        Update: {
+          internal_admin_note?: string | null;
         };
         Relationships: [];
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      review_business_application: {
+        Args: {
+          p_application_id: string;
+          p_decision: string;
+          p_rejection_reason?: string | null;
+          p_internal_admin_note?: string | null;
+        };
+        Returns: { application_id: string; application_status: string }[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

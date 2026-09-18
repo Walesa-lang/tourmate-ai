@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   applicationName: "TourMate AI",
-  title: "TourMate AI | Your AI Travel Companion",
+  title: "TourMate AI | Discover Namibia",
   description:
-    "Discover destinations, local food, culture, stays, safety information, and real-time travel guidance with TourMate AI.",
+    "Explore Namibia destinations and sample experiences with TourMate AI's demo travel assistant.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,

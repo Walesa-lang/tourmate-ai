@@ -57,8 +57,7 @@ function FavouriteCollection({ favourites, type }: { favourites: Favourite[]; ty
             <h3>{snapshotValue(favourite, "name") || favourite.item_id}</h3>
             <span>{snapshotValue(favourite, "location")}</span>
             <div className="dashboard-favourite-meta">
-              {snapshotValue(favourite, "rating") && <small>★ {snapshotValue(favourite, "rating")}</small>}
-              {snapshotValue(favourite, "price") && <small>{snapshotValue(favourite, "price")}</small>}
+              {snapshotValue(favourite, "price") && <small>Illustrative price: {snapshotValue(favourite, "price")}</small>}
               {snapshotValue(favourite, "duration") && <small>{snapshotValue(favourite, "duration")}</small>}
             </div>
           </div>
@@ -87,9 +86,9 @@ export function DashboardContent({ fullName, email, greetingName, plan, savedTri
           <div>
             <p className="dashboard-eyebrow"><span aria-hidden="true">✦</span>Your travel space</p>
             <h1 id="dashboard-title"><span>Welcome back,</span> {greetingName}</h1>
-            <p>Plan what is next and keep your future TourMate favourites together in one calm, organised place.</p>
+            <p>Your profile, saved places, and previous trip notes are here when you need them. Assistant conversations stay in the current browser tab.</p>
           </div>
-          <Link className="button dashboard-primary-action" href="/trip-planner">Create a trip<span aria-hidden="true">→</span></Link>
+          <Link className="button dashboard-primary-action" href="/ai-guide">Ask the Assistant<span aria-hidden="true">→</span></Link>
         </div>
       </section>
 
@@ -103,9 +102,9 @@ export function DashboardContent({ fullName, email, greetingName, plan, savedTri
 
         <div className="dashboard-content-grid">
           <section className="dashboard-collection-card dashboard-trips-card" aria-labelledby="saved-trips-title">
-            <div className="dashboard-section-heading"><div><p>Your journeys</p><h2 id="saved-trips-title">Recent and saved trips</h2></div><Link href="/trip-planner">Create a trip</Link></div>
+            <div className="dashboard-section-heading"><div><p>Previously saved</p><h2 id="saved-trips-title">Saved trip notes</h2></div></div>
             {savedTrips.length === 0 ? (
-              <EmptyCollection icon="trip" title="No saved trips yet" description="Trips you save in the Trip Planner will appear here." action="Plan your first trip" href="/trip-planner" />
+              <div className="dashboard-empty-state"><span className="dashboard-empty-icon"><DashboardIcon name="trip" /></span><h3>No saved trip notes yet</h3><p>Previously saved trips will appear here. Ask the Assistant for new Namibia ideas.</p><Link className="dashboard-text-link" href="/ai-guide">Open Assistant<span aria-hidden="true">→</span></Link></div>
             ) : (
               <div className="dashboard-trip-list">
                 {savedTrips.map((trip) => (
@@ -136,7 +135,7 @@ export function DashboardContent({ fullName, email, greetingName, plan, savedTri
             <FavouriteCollection favourites={favouriteAttractions} type="attraction" />
           </section>
 
-          <aside className="dashboard-sidebar" aria-label="Account and subscription">
+          <aside className="dashboard-sidebar" aria-label="Profile and account">
             <section className="dashboard-profile-card" aria-labelledby="profile-title">
               <div className="dashboard-card-icon"><DashboardIcon name="user" /></div>
               <p className="dashboard-card-kicker">Your account</p>
@@ -154,7 +153,7 @@ export function DashboardContent({ fullName, email, greetingName, plan, savedTri
             <section className="dashboard-plan-card" aria-labelledby="plan-title">
               <span className="dashboard-plan-badge">Current plan</span>
               <h2 id="plan-title">{planName}</h2>
-              <p>Core trip planning tools are available on your current plan.</p>
+              <p>Explore destinations and try the Assistant demo on your current plan.</p>
               <button type="button" disabled>Upgrade — coming soon</button>
               <small>No payment processing is active.</small>
             </section>

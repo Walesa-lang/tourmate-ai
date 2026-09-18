@@ -5,8 +5,8 @@ import { SiteNavigation } from "../components/site-navigation";
 import { DashboardContent } from "./dashboard-content";
 
 export const metadata: Metadata = {
-  title: "Dashboard | TourMate AI",
-  description: "Manage your TourMate AI trips, favourites, profile, and plan.",
+  title: "Profile & saved places | TourMate AI",
+  description: "View your TourMate AI profile, saved places, and previously saved trip notes.",
 };
 
 export default async function DashboardPage() {

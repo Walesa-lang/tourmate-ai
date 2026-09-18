@@ -69,7 +69,7 @@ describe("offline page", () => {
   it("renders a deliberate limitation message and retry action", () => {
     const html = renderToStaticMarkup(OfflinePage());
     expect(html).toContain("You&#x27;re offline");
-    expect(html).toContain("live AI, current prices, bookings, maps, and authenticated travel data");
+    expect(html).toContain("Assistant demo, browse travel ideas, and access your saved profile information");
     expect(html).toContain('href="/"');
   });
 });

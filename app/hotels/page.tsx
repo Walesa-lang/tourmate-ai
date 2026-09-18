@@ -42,13 +42,15 @@ export default function HotelsPage() {
           <div className="container hotels-hero-content">
             <div className="eyebrow"><span aria-hidden="true">✦</span> Stay somewhere unforgettable</div>
             <h1 id="hotels-title">Find Your Perfect Stay</h1>
-            <p>Discover welcoming places to stay across Namibia, from vibrant cities to quiet desert landscapes.</p>
-            <form className="hotel-search" action="#stays">
+            <p>Browse illustrative accommodation ideas across Namibia. Listings, amenities, and prices are samples; confirm details directly with providers.</p>
+            <form className="hotel-search" action="#stays" aria-label="Stay search preview">
+              <fieldset className="catalogue-preview-fields" disabled>
               <div className="hotel-search-field destination-field"><label htmlFor="hotel-destination">Destination</label><input id="hotel-destination" name="destination" type="search" placeholder="City or region in Namibia" /></div>
               <div className="hotel-search-field"><label htmlFor="check-in">Check-in</label><input id="check-in" name="checkIn" type="date" /></div>
               <div className="hotel-search-field"><label htmlFor="check-out">Check-out</label><input id="check-out" name="checkOut" type="date" /></div>
               <div className="hotel-search-field"><label htmlFor="guests">Guests</label><select id="guests" name="guests" defaultValue="2"><option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option><option value="5">5+ guests</option></select></div>
-              <button className="button hotel-search-button" type="submit">Search stays <span aria-hidden="true">→</span></button>
+              <button className="button hotel-search-button" type="button" disabled title="Live stay search is not available">Search preview <span aria-hidden="true">→</span></button>
+              </fieldset>
             </form>
           </div>
         </section>
@@ -61,22 +63,22 @@ export default function HotelsPage() {
             <div className="hotel-layout">
               <aside className="hotel-filters" aria-labelledby="filter-heading">
                 <div className="filter-title"><div><span>Refine your stay</span><h2 id="filter-heading">Filters</h2></div><button type="reset" form="hotel-filter-form">Reset</button></div>
-                <form id="hotel-filter-form">
+                <form id="hotel-filter-form" aria-label="Stay filters preview"><fieldset className="catalogue-preview-fields" disabled>
                   <div className="hotel-filter-group"><label htmlFor="price-range">Maximum price per night</label><input id="price-range" name="price" type="range" min="500" max="5000" defaultValue="3500" /><div className="range-labels"><span>N$500</span><span>N$5,000+</span></div></div>
                   <fieldset className="hotel-filter-group"><legend>Star rating</legend>{[5,4,3].map((star) => <label className="check-option" key={star}><input type="checkbox" name="stars" value={star} /><span aria-hidden="true">★</span> {star} stars</label>)}</fieldset>
                   <fieldset className="hotel-filter-group"><legend>Property type</legend>{["Hotel", "Lodge", "Guesthouse", "Apartment", "Campsite"].map((type) => <label className="check-option" key={type}><input type="checkbox" name="propertyType" value={type} />{type}</label>)}</fieldset>
                   <fieldset className="hotel-filter-group"><legend>Amenities</legend>{["Free Wi-Fi", "Pool", "Breakfast included", "Parking"].map((amenity) => <label className="check-option" key={amenity}><input type="checkbox" name="amenities" value={amenity} />{amenity}</label>)}</fieldset>
-                </form>
+                </fieldset></form>
               </aside>
 
               <div className="hotel-results">
-                <div className="hotel-results-heading"><div><span>Handpicked in Namibia</span><h2 id="stay-heading">Places you&apos;ll love</h2><p>6 properties found</p></div><label htmlFor="sort-stays">Sort by<select id="sort-stays" name="sort" defaultValue="recommended"><option value="recommended">Recommended</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="rating">Highest rating</option></select></label></div>
+                <div className="hotel-results-heading"><div><span>Illustrative Namibia stays</span><h2 id="stay-heading">Accommodation ideas</h2><p>6 sample listings · Search and filters are previews only.</p></div></div>
                 <FavouritesProvider itemType="hotel" returnPath="/hotels"><div className="hotel-grid">
                   {hotelProperties.map((property) => (
                     <article className="hotel-card" key={property.name}>
                       <FavouriteButton itemId={favouriteId(property.name)} itemName={property.name} snapshot={{ ...property }} />
                       <HotelImage src={property.image} alt={property.alt} propertyType={property.type} scene={property.scene} />
-                      <div className="hotel-card-body"><div className="hotel-card-top"><p className="hotel-location">⌖ {property.location}, Namibia</p><span className="hotel-rating" aria-label={`${property.rating} out of 5 stars`}>★ {property.rating}</span></div><h3>{property.name}</h3><p className="hotel-description">{property.description}</p><ul className="amenity-list" aria-label="Amenities">{property.amenities.map((amenity) => <li key={amenity}>✓ {amenity}</li>)}</ul><div className="hotel-card-footer"><p><strong>{property.price}</strong><span>per night</span></p><a className="button hotel-details-button" href="#hotel-destination">View Details</a></div></div>
+                      <div className="hotel-card-body"><div className="hotel-card-top"><p className="hotel-location">⌖ {property.location}, Namibia</p><span className="hotel-rating">Sample listing</span></div><h3>{property.name}</h3><p className="hotel-description">{property.description}</p><ul className="amenity-list" aria-label="Illustrative amenities">{property.amenities.map((amenity) => <li key={amenity}>✓ {amenity}</li>)}</ul><div className="hotel-card-footer"><p><strong>{property.price}</strong><span>illustrative nightly price</span></p><Link className="button hotel-details-button" href="/ai-guide">Ask Assistant</Link></div></div>
                     </article>
                   ))}
                 </div></FavouritesProvider>
@@ -85,7 +87,7 @@ export default function HotelsPage() {
           </div>
         </section>
       </main>
-      <footer className="site-footer"><div className="container footer-content"><Brand /><p>Explore the world with confidence.</p><nav aria-label="Footer navigation"><a href="#stays">Privacy</a><a href="#stays">Terms</a><a href="#stays">Contact</a></nav></div></footer>
+      <footer className="site-footer"><div className="container footer-content"><Brand /><p>Discover Namibia, one idea at a time.</p><nav aria-label="Footer navigation"><Link href="/">Home</Link><Link href="/ai-guide">Assistant</Link><Link href="/partner/apply">Partners</Link></nav></div></footer>
     </div>
   );
 }

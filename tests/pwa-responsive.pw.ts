@@ -80,7 +80,7 @@ test("manifest, icons, service worker, offline page, AI Guide, and auth route ar
   await page.goto("/offline");
   await expect(page.getByRole("heading", { name: "You're offline" })).toBeVisible();
   await page.goto("/ai-guide");
-  await expect(page.getByRole("heading", { name: "Meet Your AI Travel Guide" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Ask the TourMate Assistant" })).toBeVisible();
   await page.goto("/sign-in");
   await expect(page.getByRole("heading", { name: "Sign in to TourMate AI" })).toBeVisible();
 });

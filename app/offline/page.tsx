@@ -14,7 +14,7 @@ export default function OfflinePage() {
         <Image src="/icons/tourmate-192.png" width="88" height="88" alt="" priority />
         <p className="offline-eyebrow">TourMate AI</p>
         <h1 id="offline-title">You&apos;re offline</h1>
-        <p>Reconnect to use live AI, current prices, bookings, maps, and authenticated travel data.</p>
+        <p>Reconnect to use the Assistant demo, browse travel ideas, and access your saved profile information.</p>
         <Link className="button offline-retry" href="/">Try again</Link>
       </section>
       <style>{`

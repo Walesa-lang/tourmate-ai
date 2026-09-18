@@ -459,6 +459,15 @@ h1 span {
   font-size: 13px;
 }
 
+.home-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 29px; }
+.home-cta-row .plan-button { min-height: 52px; }
+.home-explore-link { display: inline-flex; min-height: 48px; align-items: center; gap: 7px; color: var(--blue-dark); font-size: 14px; font-weight: 800; }
+.home-explore-link:hover { text-decoration: underline; }
+.home-cta-row a:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+.catalogue-preview-fields { display: contents; }
+.catalogue-preview-fields :disabled { cursor: not-allowed; opacity: .7; }
+@media (max-width: 390px) { .home-cta-row { align-items: stretch; flex-direction: column; } .home-cta-row .plan-button { width: 100%; } }
+
 .popular {
   display: flex;
   flex-wrap: wrap;
@@ -663,6 +672,11 @@ h1 span {
   overflow: hidden;
   border-radius: 11px;
 }
+
+.namibia-city-art, .namibia-dune-art { display: grid; place-items: center; }
+.namibia-city-art { background: linear-gradient(#83c9e5 0 65%, #b99069 66%); color: #fff; font-weight: 900; }
+.namibia-city-art span { padding: 7px; border-radius: 7px; background: rgb(16 47 86 / 65%); }
+.namibia-dune-art { background: linear-gradient(145deg, #86d0ec 0 49%, #de8c4b 50% 68%, #f4bb76 69%); color: #ffdb86; font-size: 27px; }
 
 .paris-art {
   display: grid;
@@ -1246,6 +1260,17 @@ h1 span {
   letter-spacing: -1px;
   transform: translateX(-50%);
 }
+
+.scene-windhoek { background: linear-gradient(#91d4eb 0 68%, #d4ae75 69%); }
+.scene-windhoek .scene-land { background: #8b9a65; }
+.scene-swakopmund, .scene-walvis-bay { background: linear-gradient(#8acfe7 0 60%, #3b9fc1 61% 77%, #efd09b 78%); }
+.scene-swakopmund .scene-land, .scene-walvis-bay .scene-land { background: #c4a66c; }
+.scene-sossusvlei { background: linear-gradient(#93d2eb 0 63%, #e8af66 64%); }
+.scene-sossusvlei .scene-land { background: #cf7641; height: 125px; }
+.scene-etosha { background: linear-gradient(#99c9df 0 72%, #d4b87c 73%); }
+.scene-etosha .scene-land { background: #9e9b64; }
+.scene-fish-river { background: linear-gradient(#a4d3e6 0 67%, #c68967 68%); }
+.scene-fish-river .scene-land { background: #9a624d; height: 112px; }
 
 .scene-livingstone {
   background:

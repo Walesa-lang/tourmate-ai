@@ -5,7 +5,7 @@ const features = [
   {
     title: "AI Travel Guide",
     description:
-      "Get personal recommendations and helpful answers tailored to your travel style.",
+      "Ask the demo assistant for Namibia trip ideas, places to stay, and practical travel guidance.",
     color: "blue",
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -17,7 +17,7 @@ const features = [
   {
     title: "Places to Explore",
     description:
-      "Discover famous landmarks, hidden gems, and unforgettable places wherever you go.",
+      "Browse a curated introduction to Namibia's destinations and experiences.",
     color: "turquoise",
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -29,7 +29,7 @@ const features = [
   {
     title: "Local Food and Culture",
     description:
-      "Taste authentic local dishes and understand the traditions that make each place unique.",
+      "Find ideas for local food and culture to research before you travel.",
     color: "orange",
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -38,9 +38,9 @@ const features = [
     ),
   },
   {
-    title: "Safety and Real-Time Updates",
+    title: "Practical Travel Guidance",
     description:
-      "Travel confidently with practical safety advice and timely guidance for your destination.",
+      "Get general preparation tips, then confirm current conditions with official sources.",
     color: "navy",
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -81,59 +81,21 @@ export default function Home() {
             <div className="hero-copy">
               <div className="eyebrow">
                 <span aria-hidden="true">✦</span>
-                Your smarter way to travel
+                Discover Namibia with TourMate AI
               </div>
               <h1>
-                Your AI Travel Companion,{" "}
-                <span>Anywhere in the World</span>
+                Explore Namibia with{" "}
+                <span>a travel assistant by your side</span>
               </h1>
               <p>
-                Discover must-see attractions, local restaurants, welcoming
-                stays, authentic culture, and practical safety information—all
-                with real-time travel guidance by your side.
+                Browse ideas for places and experiences, then ask our demo assistant
+                for help shaping a Namibia journey. Use its answers as a starting
+                point and confirm details before you travel.
               </p>
 
-              <form className="search-card" id="trip-search">
-                <label htmlFor="destination">Where do you want to go?</label>
-                <div className="search-row">
-                  <div className="search-input">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <circle cx="11" cy="11" r="7" />
-                      <path d="m20 20-4-4" />
-                    </svg>
-                    <input
-                      id="destination"
-                      name="destination"
-                      type="search"
-                      placeholder="Search a city or destination"
-                    />
-                  </div>
-                  <Link className="button plan-button" href="/trip-planner">
-                    Plan My Trip
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-                <div className="popular">
-                  <span>Popular:</span>
-                  <a href="#trip-search">Paris</a>
-                  <a href="#trip-search">Tokyo</a>
-                  <a href="#trip-search">Bali</a>
-                  <a href="#trip-search">New York</a>
-                </div>
-              </form>
-
-              <div className="trust-row">
-                <div className="avatar-stack" aria-hidden="true">
-                  <span>AM</span>
-                  <span>JL</span>
-                  <span>SK</span>
-                </div>
-                <div>
-                  <div className="stars" aria-label="5 out of 5 stars">
-                    ★★★★★
-                  </div>
-                  <p>Trusted by curious travellers worldwide</p>
-                </div>
+              <div className="home-cta-row">
+                <Link className="button plan-button" href="/ai-guide">Ask the Assistant <span aria-hidden="true">→</span></Link>
+                <Link className="home-explore-link" href="/explore">Explore destinations <span aria-hidden="true">→</span></Link>
               </div>
             </div>
 
@@ -152,23 +114,21 @@ export default function Home() {
                 ✈
               </div>
               <div className="destination-card card-paris">
-                <div className="destination-art paris-art">
-                  <span className="eiffel">♜</span>
+                <div className="destination-art namibia-city-art">
+                  <span aria-hidden="true">WH</span>
                 </div>
                 <div>
-                  <small>Top destination</small>
-                  <strong>Paris, France</strong>
-                  <span>★ 4.9</span>
+                  <small>Discover Namibia</small>
+                  <strong>Windhoek</strong>
                 </div>
               </div>
               <div className="destination-card card-bali">
-                <div className="destination-art bali-art">
-                  <span>☀</span>
+                <div className="destination-art namibia-dune-art">
+                  <span aria-hidden="true">☀</span>
                 </div>
                 <div>
-                  <small>Trending now</small>
-                  <strong>Bali, Indonesia</strong>
-                  <span>★ 4.8</span>
+                  <small>Discover Namibia</small>
+                  <strong>Sossusvlei</strong>
                 </div>
               </div>
               <div className="compass" aria-hidden="true">
@@ -192,8 +152,8 @@ export default function Home() {
               <span>Everything you need, in one place</span>
               <h2>Travel smarter. Experience more.</h2>
               <p>
-                From your first idea to your journey home, TourMate AI helps
-                make every trip simpler, safer, and more memorable.
+                Start with curated ideas and use the demo assistant for general
+                guidance as you explore Namibia.
               </p>
             </div>
             <div className="feature-grid">
@@ -223,11 +183,11 @@ export default function Home() {
       <footer className="site-footer" id="footer">
         <div className="container footer-content">
           <Brand />
-          <p>Explore the world with confidence.</p>
+          <p>Discover Namibia, one idea at a time.</p>
           <nav aria-label="Footer navigation">
-            <a href="#footer">Privacy</a>
-            <a href="#footer">Terms</a>
-            <a href="#footer">Contact</a>
+            <Link href="/ai-guide">Assistant</Link>
+            <Link href="/explore">Explore</Link>
+            <Link href="/partner/apply">Partners</Link>
           </nav>
         </div>
       </footer>

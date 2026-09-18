@@ -6,7 +6,7 @@ import { AiGuideChat } from "./ai-guide-chat";
 export const metadata: Metadata = {
   title: "AI Travel Guide | TourMate AI",
   description:
-    "Try TourMate AI's interactive demo travel guide for local trip planning, accommodation, attractions, transport, budgets, and safety guidance.",
+    "Try TourMate AI's demo assistant for Namibia destinations, sample stays, activities, routes, and general travel preparation.",
 };
 
 function Brand() {
@@ -33,9 +33,9 @@ export default function AiGuidePage() {
           <div className="guide-orb guide-orb-one" />
           <div className="guide-orb guide-orb-two" />
           <div className="container guide-intro-content">
-            <div className="eyebrow"><span aria-hidden="true">✦</span>Your smart travel companion</div>
-            <h1 id="guide-title">Meet Your AI Travel Guide</h1>
-            <p>Get friendly help with destinations, attractions, accommodation, local food, culture, safety, transport, budgeting, and planning every part of your trip.</p>
+            <div className="eyebrow"><span aria-hidden="true">✦</span>Explore Namibia</div>
+            <h1 id="guide-title">Ask the TourMate Assistant</h1>
+            <p>Try questions about Namibia destinations, sample stays, activities, routes, and general travel preparation. Verify current details with providers and official sources.</p>
             <div className="preview-badge" role="status">
               <span aria-hidden="true">i</span>
               Demo mode — responses are simulated and real-time information is not active
@@ -47,9 +47,9 @@ export default function AiGuidePage() {
       <footer className="site-footer">
         <div className="container footer-content">
           <Brand />
-          <p>Explore the world with confidence.</p>
+          <p>Discover Namibia, one idea at a time.</p>
           <nav aria-label="Footer navigation">
-            <Link href="/#footer">Privacy</Link><Link href="/#footer">Terms</Link><Link href="/#footer">Contact</Link>
+            <Link href="/">Home</Link><Link href="/explore">Explore</Link><Link href="/partner/apply">Partners</Link>
           </nav>
         </div>
       </footer>

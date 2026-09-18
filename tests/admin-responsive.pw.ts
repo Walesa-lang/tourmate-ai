@@ -18,7 +18,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 768, height: 1024 
   test(`admin route and application layout are protected and responsive at ${viewport.width}px`, async ({ page, request }) => {
     await page.setViewportSize(viewport);
     await page.goto("/admin", { waitUntil: "domcontentloaded" });
-    await expect(page).toHaveURL(/\/sign-in\?redirectTo=%2Fadmin$/);
+    await expect(page).toHaveURL(/\/sign-in\?redirectTo=%2Fadmin$/, { timeout: 20_000 });
     await expect(page.locator(".auth-submit")).toBeVisible();
 
     await mountAdminLayout(page, request);

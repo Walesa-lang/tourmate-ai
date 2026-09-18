@@ -3,65 +3,65 @@ import Link from "next/link";
 import { SiteNavigation } from "../components/site-navigation";
 
 export const metadata: Metadata = {
-  title: "Explore Destinations | TourMate AI",
+  title: "Explore Namibia | TourMate AI",
   description:
-    "Discover inspiring destinations, attractions, culture, food, accommodation, and useful travel information with TourMate AI.",
+    "Browse a curated introduction to Namibia destinations with TourMate AI.",
 };
 
 const destinations = [
   {
-    city: "Livingstone",
-    country: "Zambia",
+    city: "Windhoek",
+    country: "Namibia",
     description:
-      "Feel the power of Victoria Falls and discover unforgettable wildlife adventures along the Zambezi.",
+      "Explore Namibia's capital, its markets, museums, cafés, and nearby landscapes.",
     category: "Adventure & Nature",
-    scene: "livingstone",
-    landmark: "VF",
+    scene: "windhoek",
+    landmark: "WH",
   },
   {
-    city: "Cape Town",
-    country: "South Africa",
+    city: "Swakopmund",
+    country: "Namibia",
     description:
-      "Explore dramatic coastlines, colourful neighbourhoods, vineyards, and iconic Table Mountain.",
+      "Discover Atlantic coast views and a base for desert activities.",
     category: "City & Coast",
-    scene: "cape-town",
-    landmark: "TM",
+    scene: "swakopmund",
+    landmark: "SW",
   },
   {
-    city: "Zanzibar",
-    country: "Tanzania",
+    city: "Walvis Bay",
+    country: "Namibia",
     description:
-      "Unwind on turquoise shores and wander through the spice-scented lanes of historic Stone Town.",
+      "Look for lagoon birdlife, coastal scenery, and nearby dunes.",
     category: "Beach & Culture",
-    scene: "zanzibar",
-    landmark: "ZS",
+    scene: "walvis-bay",
+    landmark: "WB",
   },
   {
-    city: "Paris",
-    country: "France",
+    city: "Sossusvlei",
+    country: "Namibia",
     description:
-      "Experience world-famous art, charming cafés, elegant boulevards, and timeless architecture.",
+      "Discover towering dunes and the distinctive landscapes of the Namib Desert.",
     category: "Culture & Romance",
-    scene: "paris",
+    scene: "sossusvlei",
+    landmark: "SV",
+  },
+  {
+    city: "Etosha",
+    country: "Namibia",
+    description:
+      "Learn about wildlife viewing around the national park's waterholes.",
+    category: "Luxury & Adventure",
+    scene: "etosha",
     landmark: "ET",
   },
   {
-    city: "Dubai",
-    country: "United Arab Emirates",
+    city: "Fish River Canyon",
+    country: "Namibia",
     description:
-      "Discover bold modern landmarks, desert adventures, vibrant souks, and luxurious hospitality.",
-    category: "Luxury & Adventure",
-    scene: "dubai",
-    landmark: "BK",
-  },
-  {
-    city: "Tokyo",
-    country: "Japan",
-    description:
-      "Meet a captivating mix of ancient temples, inventive food, neon districts, and quiet gardens.",
+      "Explore sweeping canyon viewpoints in southern Namibia.",
     category: "Food & Culture",
-    scene: "tokyo",
-    landmark: "TJ",
+    scene: "fish-river",
+    landmark: "FR",
   },
 ];
 
@@ -96,11 +96,10 @@ export default function ExplorePage() {
               <span aria-hidden="true">✦</span>
               Find your next adventure
             </div>
-            <h1>Explore Amazing Destinations</h1>
+            <h1>Explore Namibia</h1>
             <p>
-              Discover inspiring destinations, must-see attractions, local
-              culture and food, comfortable accommodation, and useful travel
-              information for every kind of journey.
+              Browse a curated starting point for Namibia. These destination
+              descriptions are guides, not live travel updates.
             </p>
           </div>
         </section>
@@ -110,7 +109,8 @@ export default function ExplorePage() {
           aria-labelledby="destination-results"
         >
           <div className="container">
-            <form className="filter-panel" id="destination-search">
+            <form className="filter-panel" id="destination-search" aria-label="Destination search preview">
+              <fieldset className="catalogue-preview-fields" disabled>
               <div className="filter-field filter-search">
                 <label htmlFor="explore-search">Search destinations</label>
                 <div className="explore-search-input">
@@ -131,12 +131,7 @@ export default function ExplorePage() {
                 <label htmlFor="country">Country</label>
                 <select id="country" name="country" defaultValue="">
                   <option value="">All countries</option>
-                  <option>Zambia</option>
-                  <option>South Africa</option>
-                  <option>Tanzania</option>
-                  <option>France</option>
-                  <option>United Arab Emirates</option>
-                  <option>Japan</option>
+                  <option>Namibia</option>
                 </select>
               </div>
 
@@ -162,15 +157,16 @@ export default function ExplorePage() {
                 </select>
               </div>
 
-              <button className="button filter-button" type="button">
-                Search
+              <button className="button filter-button" type="button" disabled title="Catalogue search is coming soon">
+                Search preview
                 <span aria-hidden="true">→</span>
               </button>
+              </fieldset>
             </form>
 
             <div className="results-heading">
               <div>
-                <span>Handpicked for you</span>
+                <span>Curated destination ideas · search preview only</span>
                 <h2 id="destination-results">Popular destinations</h2>
               </div>
               <p>6 destinations</p>
@@ -194,9 +190,7 @@ export default function ExplorePage() {
                   <div className="explore-card-body">
                     <div className="category-row">
                       <span>{destination.category}</span>
-                      <span className="card-rating" aria-label="4.9 out of 5">
-                        ★ 4.9
-                      </span>
+                      <span className="card-rating">Travel idea</span>
                     </div>
                     <h3>{destination.city}</h3>
                     <div className="country">
@@ -207,10 +201,10 @@ export default function ExplorePage() {
                       {destination.country}
                     </div>
                     <p>{destination.description}</p>
-                    <a className="destination-button" href="#destination-search">
-                      Explore Destination
+                    <Link className="destination-button" href="/ai-guide">
+                      Ask about this place
                       <span aria-hidden="true">→</span>
-                    </a>
+                    </Link>
                   </div>
                 </article>
               ))}
@@ -222,11 +216,11 @@ export default function ExplorePage() {
       <footer className="site-footer">
         <div className="container footer-content">
           <Brand />
-          <p>Explore the world with confidence.</p>
+          <p>Discover Namibia, one idea at a time.</p>
           <nav aria-label="Footer navigation">
-            <a href="#destination-search">Privacy</a>
-            <a href="#destination-search">Terms</a>
-            <a href="#destination-search">Contact</a>
+            <Link href="/">Home</Link>
+            <Link href="/ai-guide">Assistant</Link>
+            <Link href="/partner/apply">Partners</Link>
           </nav>
         </div>
       </footer>

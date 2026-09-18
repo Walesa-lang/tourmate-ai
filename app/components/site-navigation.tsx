@@ -8,8 +8,8 @@ import { createClient } from "@/utils/supabase/client";
 import { PARTNERS_NAV_LABEL } from "@/app/i18n/translations";
 
 const navigationLinks = [
-  ["/", "Home"], ["/explore", "Explore"], ["/ai-guide", "AI Guide"],
-  ["/hotels", "Hotels"], ["/attractions", "Attractions"], ["/trip-planner", "Trip Planner"],
+  ["/ai-guide", "AI Assistant"], ["/explore", "Explore"],
+  ["/hotels", "Stays"], ["/attractions", "Activities"],
   ["/partner/dashboard", PARTNERS_NAV_LABEL],
 ] as const;
 
@@ -115,6 +115,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
         <Brand />
         <div className="nav-links">
           {navigationLinks.map(([href, label]) => <Link key={href} href={href} {...activeProps(href)}>{href === "/partner/dashboard" ? <span className="nav-partners">{label}</span> : label}</Link>)}
+          {user && <Link href="/dashboard" {...activeProps("/dashboard")}>Profile</Link>}
         </div>
         <div className="nav-actions">
           {isAuthLoading ? (
@@ -133,7 +134,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
                 </div>
                 <Link className="account-dashboard-link" href="/dashboard" role="menuitem" onClick={() => setIsAccountOpen(false)}>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" /></svg>
-                  Dashboard
+                  Profile & saved places
                 </Link>
                 <button className="account-sign-out" type="button" role="menuitem" onClick={handleSignOut} disabled={isSigningOut}>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>
@@ -145,7 +146,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
           ) : (
             <Link className="sign-in" href="/sign-in">Sign In</Link>
           )}
-          <Link className="button button-small" href="/trip-planner">Plan a Trip <span aria-hidden="true">→</span></Link>
+          <Link className="button button-small" href="/ai-guide">Ask the Assistant <span aria-hidden="true">→</span></Link>
         </div>
         <button ref={toggleRef} className={`mobile-menu-toggle${isOpen ? " is-open" : ""}`} type="button" aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isOpen} aria-controls={menuId} onClick={() => setIsOpen((open) => !open)}>
           <span /><span /><span />
@@ -153,6 +154,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
         <div id={menuId} className={`mobile-menu${isOpen ? " is-open" : ""}`}>
           <div className="mobile-menu-links">
             {navigationLinks.map(([href, label]) => <Link key={href} href={href} onClick={closeMenu} {...activeProps(href)}>{label}</Link>)}
+            {user && <Link href="/dashboard" onClick={closeMenu} {...activeProps("/dashboard")}>Profile</Link>}
           </div>
           {user && !isAuthLoading && (
             <section className="mobile-account" aria-labelledby={`${accountMenuId}-mobile-title`}>
@@ -163,7 +165,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
               </div>
               <Link className="mobile-account-dashboard" href="/dashboard" onClick={closeMenu}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" /></svg>
-                Dashboard
+                Profile & saved places
               </Link>
               <button className="mobile-account-sign-out" type="button" onClick={handleSignOut} disabled={isSigningOut}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>
@@ -177,7 +179,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
             ) : !user ? (
               <Link className="mobile-sign-in" href="/sign-in" onClick={closeMenu}>Sign In</Link>
             ) : null}
-            <Link className="button mobile-plan-trip" href="/trip-planner" onClick={closeMenu}>Plan a Trip <span aria-hidden="true">→</span></Link>
+            <Link className="button mobile-plan-trip" href="/ai-guide" onClick={closeMenu}>Ask the Assistant <span aria-hidden="true">→</span></Link>
           </div>
           {authError && <p className="nav-auth-error" role="alert">{authError}</p>}
         </div>

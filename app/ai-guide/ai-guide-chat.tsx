@@ -7,8 +7,8 @@ import type { AiGuideErrorResponse, AiGuideMessage, AiGuideSuccessResponse } fro
 
 type Message = { id: number; role: "user" | "assistant"; text: string; timestamp: number; emergency?: boolean; error?: boolean };
 
-const WELCOME = "Hi! I’m your TourMate AI guide. Tell me where you are going—or what kind of trip you are dreaming about—and I’ll help you get started.";
-const suggestions = ["Plan a Namibia trip", "Find accommodation", "Recommend attractions", "Help with an emergency"];
+const WELCOME = "Hi! I’m your TourMate AI guide. Ask about Namibia destinations, sample stays, activities, routes, or general travel preparation. My demo answers are prewritten, so please verify details before travelling.";
+const suggestions = ["Ideas for a Namibia route", "Find accommodation", "Recommend attractions", "Travel preparation tips"];
 const getTimestamp = () => Date.now();
 
 function ChatIcon() {
@@ -34,7 +34,7 @@ export function AiGuideChat() {
   }, []);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    endRef.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
   }, [messages, thinking]);
 
   useEffect(() => () => activeRequestRef.current?.abort(), []);
@@ -151,7 +151,7 @@ export function AiGuideChat() {
               </div>
             </form>
             <p id="composer-help" className="preview-note">{t("Press Enter to send. Use Shift+Enter for a new line.")}</p>
-            <p className="demo-privacy-note">{t("Demo only. Messages stay in this browser tab and are not sent to a live AI.")}</p>
+            <p className="demo-privacy-note">{t("Demo only. Messages stay in this browser tab and are not saved to your profile or sent to a live AI.")}</p>
           </div>
         </section>
 

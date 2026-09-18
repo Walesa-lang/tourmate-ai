@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteNavigation } from "../components/site-navigation";
 import { AiGuideChat } from "./ai-guide-chat";
+import { ExpeditionIcon } from "../components/adventure-ui";
 
 export const metadata: Metadata = {
   title: "AI Travel Guide | TourMate AI",
@@ -26,19 +27,19 @@ function Brand() {
 
 export default function AiGuidePage() {
   return (
-    <div className="site-shell guide-page">
+    <div className="site-shell adventure-shell guide-page">
       <SiteNavigation headerClassName="guide-header" />
       <main>
         <section className="guide-intro" aria-labelledby="guide-title">
           <div className="guide-orb guide-orb-one" />
           <div className="guide-orb guide-orb-two" />
           <div className="container guide-intro-content">
-            <div className="eyebrow"><span aria-hidden="true">✦</span>Explore Namibia</div>
-            <h1 id="guide-title">Ask the TourMate Assistant</h1>
-            <p>Try questions about Namibia destinations, sample stays, activities, routes, and general travel preparation. Verify current details with providers and official sources.</p>
+            <div className="eyebrow"><ExpeditionIcon name="spark" size={16} /> YOUR EXPEDITION GUIDE</div>
+            <h1 id="guide-title">Ask your guide.</h1>
+            <p>Get a starting point for Namibia routes, sample stays, activities, and travel preparation. Your conversation stays in this tab.</p>
             <div className="preview-badge" role="status">
               <span aria-hidden="true">i</span>
-              Demo mode — responses are simulated and real-time information is not active
+              Demo guide · Prewritten replies · No live information
             </div>
           </div>
         </section>

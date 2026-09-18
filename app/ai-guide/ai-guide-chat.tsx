@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "../i18n/language-context";
 import { translations } from "../i18n/translations";
@@ -113,10 +114,12 @@ export function AiGuideChat() {
             <div className="assistant-avatar" aria-hidden="true"><ChatIcon /></div>
             <div className="chat-heading-copy">
               <h2 id="chat-title">TourMate AI</h2>
-              <p><span className="status-dot" aria-hidden="true" />{t("Demo mode")}</p>
+              <p><span className="status-dot" aria-hidden="true" />{t("Demo mode")} · Namibia field guide</p>
             </div>
             <button className="clear-chat-button" type="button" onClick={clearConversation} disabled={messages.length <= 1 && !thinking} aria-label={t("Clear conversation")}>{t("Clear conversation")}</button>
           </header>
+
+          <div className="guide-quick-actions" aria-label="Start exploring"><Link href="/explore"><span>01</span> Discover destinations</Link><Link href="/hotels"><span>02</span> Find a sample stay</Link><Link href="/attractions"><span>03</span> Explore activities</Link><button type="button" onClick={() => submitMessage("How should I prepare for a Namibia road trip?")} disabled={thinking}><span>04</span> Road trip tips</button></div>
 
           <div className="chat-messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label={t("Conversation messages")}>
             {messages.map((message) => (

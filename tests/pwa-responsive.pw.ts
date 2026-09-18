@@ -24,7 +24,7 @@ for (const viewport of viewports) {
     await expectNoHorizontalOverflow(page);
 
     const installBox = await install.boundingBox();
-    const footerBox = await page.locator(".site-footer").boundingBox();
+    const footerBox = await page.locator(".adventure-footer").boundingBox();
     expect(installBox).not.toBeNull();
     expect(footerBox).not.toBeNull();
     expect(installBox!.x).toBeGreaterThanOrEqual(0);
@@ -80,7 +80,7 @@ test("manifest, icons, service worker, offline page, AI Guide, and auth route ar
   await page.goto("/offline");
   await expect(page.getByRole("heading", { name: "You're offline" })).toBeVisible();
   await page.goto("/ai-guide");
-  await expect(page.getByRole("heading", { name: "Ask the TourMate Assistant" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Ask your guide." })).toBeVisible();
   await page.goto("/sign-in");
   await expect(page.getByRole("heading", { name: "Sign in to TourMate AI" })).toBeVisible();
 });

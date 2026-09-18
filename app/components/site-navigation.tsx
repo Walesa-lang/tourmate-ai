@@ -6,10 +6,10 @@ import type { User } from "@supabase/supabase-js";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { PARTNERS_NAV_LABEL } from "@/app/i18n/translations";
+import { ExpeditionIcon } from "./adventure-ui";
 
 const navigationLinks = [
-  ["/ai-guide", "AI Assistant"], ["/explore", "Explore"],
-  ["/hotels", "Stays"], ["/attractions", "Activities"],
+  ["/explore", "Explore"], ["/hotels", "Stays"], ["/attractions", "Activities"],
   ["/partner/dashboard", PARTNERS_NAV_LABEL],
 ] as const;
 
@@ -109,7 +109,10 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
     router.refresh();
   }
 
-  return (
+  const savedHref = user ? "/dashboard#saved" : "/sign-in?redirectTo=%2Fdashboard";
+  const profileHref = user ? "/dashboard" : "/sign-in?redirectTo=%2Fdashboard";
+
+  return <>
     <header className={headerClassName}>
       <nav className="nav container" aria-label="Main navigation">
         <Brand />
@@ -185,5 +188,12 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
         </div>
       </nav>
     </header>
-  );
+    <nav className="adventure-bottom-nav" aria-label="Quick navigation">
+      <Link href="/" aria-current={pathname === "/" ? "page" : undefined}><ExpeditionIcon name="compass" /><span>Home</span></Link>
+      <Link href="/explore" aria-current={pathname === "/explore" ? "page" : undefined}><ExpeditionIcon name="pin" /><span>Explore</span></Link>
+      <Link className="bottom-guide-link" href="/ai-guide" aria-current={pathname === "/ai-guide" ? "page" : undefined}><ExpeditionIcon name="spark" size={25} /><span>Guide</span></Link>
+      <Link href={savedHref}><ExpeditionIcon name="heart" /><span>Saved</span></Link>
+      <Link href={profileHref} aria-current={pathname === "/dashboard" ? "page" : undefined}><ExpeditionIcon name="book" /><span>Profile</span></Link>
+    </nav>
+  </>;
 }

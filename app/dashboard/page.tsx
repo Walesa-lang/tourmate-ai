@@ -56,7 +56,7 @@ export default async function DashboardPage() {
   const greetingName = fullName ? fullName.split(/\s+/)[0] : email;
 
   return (
-    <div className="site-shell adventure-shell dashboard-page">
+    <div className="site-shell dashboard-page">
       <SiteNavigation headerClassName="dashboard-header" />
       <DashboardContent
         fullName={fullName}

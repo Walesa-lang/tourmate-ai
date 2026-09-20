@@ -33,13 +33,13 @@ function Brand() {
 
 export default function AttractionsPage() {
   return (
-    <div className="site-shell adventure-shell attractions-page">
+    <div className="site-shell attractions-page">
       <SiteNavigation headerClassName="attractions-header" />
       <main>
         <section className="attractions-hero" aria-labelledby="attractions-title">
           <div className="container attractions-hero-content">
-            <div className="eyebrow"><span aria-hidden="true">✦</span> FIELD GUIDE / ACTIVITIES</div>
-            <h1 id="attractions-title">Follow your curiosity.</h1>
+            <div className="eyebrow"><span aria-hidden="true">✦</span> Make every moment count</div>
+            <h1 id="attractions-title">Discover Unforgettable Experiences</h1>
             <p>Find ideas for Namibia activities and natural wonders. These are sample experiences, not bookable tours; confirm prices and details with providers.</p>
             <form className="attraction-search" action="#experiences" aria-label="Activity search preview"><fieldset className="catalogue-preview-fields" disabled>
               <div className="attraction-search-field attraction-destination-field"><label htmlFor="activity-destination">Destination</label><input id="activity-destination" name="destination" type="search" placeholder="Where in Namibia?" /></div>
@@ -51,7 +51,7 @@ export default function AttractionsPage() {
         </section>
         <section className="attractions-content" id="experiences" aria-labelledby="experience-heading">
           <div className="container">
-            <div className="activity-categories" aria-label="Sample activity categories">{categories.map(([name, icon]) => <span className="activity-category" key={name}><span aria-hidden="true">{icon}</span>{name}</span>)}</div>
+            <div className="activity-categories" aria-label="Activity categories">{categories.map(([name, icon]) => <a href="#experience-heading" className="activity-category" key={name}><span aria-hidden="true">{icon}</span>{name}</a>)}</div>
             <form className="attraction-filter-panel" aria-label="Activity filters preview"><fieldset className="catalogue-preview-fields" disabled>
               <div className="attraction-filter-field"><label htmlFor="filter-destination">Destination</label><select id="filter-destination" defaultValue=""><option value="">All destinations</option>{experiences.map((item) => <option key={item.location}>{item.location}</option>)}</select></div>
               <div className="attraction-filter-field"><label htmlFor="filter-category">Activity category</label><select id="filter-category" defaultValue=""><option value="">All categories</option>{categories.map(([name]) => <option key={name}>{name}</option>)}</select></div>
@@ -66,7 +66,7 @@ export default function AttractionsPage() {
                 {experiences.map((experience) => (
                   <article className="attraction-card" key={experience.name}>
                     <FavouriteButton itemId={favouriteId(experience.name)} itemName={experience.name} snapshot={{ ...experience }} />
-                    <AttractionImage scene={experience.scene} />
+                    <AttractionImage src={experience.image} alt={experience.alt} scene={experience.scene} />
                     <div className="attraction-card-body">
                       <div className="attraction-card-meta"><span className="attraction-category-tag">{experience.category}</span><span className="attraction-rating">Sample activity</span></div>
                       <h3>{experience.name}</h3><p className="attraction-location">⌖ {experience.location}, Namibia</p><p className="attraction-description">{experience.description}</p>

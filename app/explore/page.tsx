@@ -14,7 +14,7 @@ const destinations = [
     country: "Namibia",
     description:
       "Explore Namibia's capital, its markets, museums, cafés, and nearby landscapes.",
-    category: "Capital & Culture",
+    category: "Adventure & Nature",
     scene: "windhoek",
     landmark: "WH",
   },
@@ -23,7 +23,7 @@ const destinations = [
     country: "Namibia",
     description:
       "Discover Atlantic coast views and a base for desert activities.",
-    category: "Desert & Coast",
+    category: "City & Coast",
     scene: "swakopmund",
     landmark: "SW",
   },
@@ -32,7 +32,7 @@ const destinations = [
     country: "Namibia",
     description:
       "Look for lagoon birdlife, coastal scenery, and nearby dunes.",
-    category: "Coast & Wildlife",
+    category: "Beach & Culture",
     scene: "walvis-bay",
     landmark: "WB",
   },
@@ -41,7 +41,7 @@ const destinations = [
     country: "Namibia",
     description:
       "Discover towering dunes and the distinctive landscapes of the Namib Desert.",
-    category: "Desert Landscape",
+    category: "Culture & Romance",
     scene: "sossusvlei",
     landmark: "SV",
   },
@@ -50,7 +50,7 @@ const destinations = [
     country: "Namibia",
     description:
       "Learn about wildlife viewing around the national park's waterholes.",
-    category: "Wildlife Country",
+    category: "Luxury & Adventure",
     scene: "etosha",
     landmark: "ET",
   },
@@ -59,7 +59,7 @@ const destinations = [
     country: "Namibia",
     description:
       "Explore sweeping canyon viewpoints in southern Namibia.",
-    category: "Canyon & Nature",
+    category: "Food & Culture",
     scene: "fish-river",
     landmark: "FR",
   },
@@ -84,7 +84,7 @@ function Brand() {
 
 export default function ExplorePage() {
   return (
-    <div className="site-shell adventure-shell explore-page">
+    <div className="site-shell explore-page">
       <SiteNavigation headerClassName="explore-header" />
 
       <main>
@@ -94,12 +94,12 @@ export default function ExplorePage() {
           <div className="container explore-heading">
             <div className="eyebrow">
               <span aria-hidden="true">✦</span>
-              EXPEDITION ATLAS / NAMIBIA
+              Find your next adventure
             </div>
             <h1>Explore Namibia</h1>
             <p>
-              Six places to begin your research. Follow a landscape that calls to you,
-              then ask the guide for a route idea. Descriptions are curated, not live updates.
+              Browse a curated starting point for Namibia. These destination
+              descriptions are guides, not live travel updates.
             </p>
           </div>
         </section>
@@ -166,14 +166,14 @@ export default function ExplorePage() {
 
             <div className="results-heading">
               <div>
-                <span>FIELD GUIDE · Search preview only</span>
-                <h2 id="destination-results">Regions to discover</h2>
+                <span>Curated destination ideas · search preview only</span>
+                <h2 id="destination-results">Popular destinations</h2>
               </div>
-              <p>6 illustrated destinations</p>
+              <p>6 destinations</p>
             </div>
 
             <div className="explore-grid">
-              {destinations.map((destination, index) => (
+              {destinations.map((destination) => (
                 <article className="explore-card" key={destination.city}>
                   <div
                     className={`destination-scene scene-${destination.scene}`}
@@ -190,7 +190,7 @@ export default function ExplorePage() {
                   <div className="explore-card-body">
                     <div className="category-row">
                       <span>{destination.category}</span>
-                      <span className="card-rating">{String(index + 1).padStart(2, "0")} / 06</span>
+                      <span className="card-rating">Travel idea</span>
                     </div>
                     <h3>{destination.city}</h3>
                     <div className="country">

@@ -1,46 +1,105 @@
 import Link from "next/link";
 import { SiteNavigation } from "./components/site-navigation";
-import { AdventureFooter, ExpeditionIcon, ExpeditionLandscape, SectionHeading } from "./components/adventure-ui";
 
-const missions = [
-  { number: "01", icon: "compass" as const, title: "Choose your direction", description: "Get to know Namibia's deserts, coast, wildlife areas, and cities.", href: "/explore", action: "Explore regions" },
-  { number: "02", icon: "spark" as const, title: "Ask your expedition guide", description: "Try a route, activity, or travel-preparation question in the Assistant demo.", href: "/ai-guide", action: "Ask the Assistant" },
-  { number: "03", icon: "heart" as const, title: "Keep what inspires you", description: "Sign in to save sample stays and activities to your journey hub.", href: "/hotels", action: "Discover stays" },
+const features = [
+  {
+    title: "AI Travel Guide",
+    description:
+      "Ask the demo assistant for Namibia trip ideas, places to stay, and practical travel guidance.",
+    color: "blue",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3a7 7 0 0 0-4 12.74V19a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-3.26A7 7 0 0 0 12 3Z" />
+        <path d="M9 17h6M12 1v1M4.22 4.22l1.42 1.42M19.78 4.22l-1.42 1.42M2 12h2M20 12h2" />
+      </svg>
+    ),
+  },
+  {
+    title: "Places to Explore",
+    description:
+      "Browse a curated introduction to Namibia's destinations and experiences.",
+    color: "turquoise",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </svg>
+    ),
+  },
+  {
+    title: "Local Food and Culture",
+    description:
+      "Find ideas for local food and culture to research before you travel.",
+    color: "orange",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M16 3v18M16 3c3 1 4 4 4 7h-4" />
+      </svg>
+    ),
+  },
+  {
+    title: "Practical Travel Guidance",
+    description:
+      "Get general preparation tips, then confirm current conditions with official sources.",
+    color: "navy",
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3 4 6v5c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-3Z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+    ),
+  },
 ];
+
+function Brand() {
+  return (
+    <Link className="brand" href="/" aria-label="TourMate AI home">
+      <span className="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 28 28">
+          <circle cx="14" cy="14" r="10.5" />
+          <path d="M3.5 14h21M14 3.5c3 3.2 4.5 6.7 4.5 10.5S17 21.3 14 24.5c-3-3.2-4.5-6.7-4.5-10.5S11 6.7 14 3.5Z" />
+          <path d="m17.8 7.7-2.3 5.8-5.8 2.3 2.3-5.8 5.8-2.3Z" />
+        </svg>
+      </span>
+      <span>
+        TourMate <strong>AI</strong>
+      </span>
+    </Link>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="site-shell adventure-shell home-page">
+    <div className="site-shell">
       <SiteNavigation headerClassName="site-header" />
 
       <main>
-        <section className="hero adventure-hero" id="home">
+        <section className="hero" id="home">
           <div className="hero-glow hero-glow-one" />
           <div className="hero-glow hero-glow-two" />
           <div className="hero-grid container">
             <div className="hero-copy">
               <div className="eyebrow">
                 <span aria-hidden="true">✦</span>
-                <span className="eyebrow-cross" aria-hidden="true">✦</span> Your Namibia expedition begins here
+                Discover Namibia with TourMate AI
               </div>
               <h1>
-                Find your way <span>into the extraordinary.</span>
+                Explore Namibia with{" "}
+                <span>a travel assistant by your side</span>
               </h1>
               <p>
-                Follow your curiosity across dunes, coast, cities, and wildlife country.
-                TourMate AI helps you discover Namibia and explore ideas with a demo travel assistant.
+                Browse ideas for places and experiences, then ask our demo assistant
+                for help shaping a Namibia journey. Use its answers as a starting
+                point and confirm details before you travel.
               </p>
 
               <div className="home-cta-row">
-                <Link className="button plan-button" href="/ai-guide"><ExpeditionIcon name="spark" size={18} /> Ask your guide <span aria-hidden="true">↗</span></Link>
-                <Link className="home-explore-link" href="/explore">Explore the map <span aria-hidden="true">→</span></Link>
+                <Link className="button plan-button" href="/ai-guide">Ask the Assistant <span aria-hidden="true">→</span></Link>
+                <Link className="home-explore-link" href="/explore">Explore destinations <span aria-hidden="true">→</span></Link>
               </div>
-              <p className="adventure-truth-note"><span aria-hidden="true">◈</span> Your guide is a prewritten demo. Places and prices are sample information.</p>
             </div>
 
             <div className="hero-visual" aria-label="Travel illustration">
-              <ExpeditionLandscape />
-              <div className="expedition-map-label"><span>FIELD NOTES / NAMIBIA</span><strong>Find your next story</strong><small>20° S · 17° E</small></div>
               <div className="sun" />
               <div className="cloud cloud-one" />
               <div className="cloud cloud-two" />
@@ -87,25 +146,51 @@ export default function Home() {
           <div className="hero-wave" />
         </section>
 
-        <section className="features adventure-missions" id="explore">
+        <section className="features" id="explore">
           <div className="container">
-            <SectionHeading eyebrow="Choose your first mission" title="Make the journey yours." description="Three useful ways to begin. Pick the path that interests you." id="ai-guide" />
+            <div className="section-heading" id="ai-guide">
+              <span>Everything you need, in one place</span>
+              <h2>Travel smarter. Experience more.</h2>
+              <p>
+                Start with curated ideas and use the demo assistant for general
+                guidance as you explore Namibia.
+              </p>
+            </div>
             <div className="feature-grid">
-              {missions.map((mission) => (
-                <article className="feature-card adventure-mission-card" key={mission.number}>
-                  <div className="mission-card-top"><span className="mission-number">MISSION {mission.number}</span><ExpeditionIcon name={mission.icon} size={25} /></div>
-                  <h3>{mission.title}</h3>
-                  <p>{mission.description}</p>
-                  <Link href={mission.href}>{mission.action} <span aria-hidden="true">↗</span></Link>
+              {features.map((feature) => (
+                <article className="feature-card" key={feature.title}>
+                  <div className={`feature-icon ${feature.color}`}>
+                    {feature.icon}
+                  </div>
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
+                  <Link
+                    href={
+                      feature.title === "AI Travel Guide"
+                        ? "/ai-guide"
+                        : "/explore"
+                    }
+                  >
+                    Learn more <span aria-hidden="true">→</span>
+                  </Link>
                 </article>
               ))}
             </div>
           </div>
         </section>
-        <section className="adventure-discover" aria-labelledby="discover-title"><div className="container adventure-discover-grid"><div><span className="adventure-eyebrow">A country of contrasts</span><h2 id="discover-title">Your next chapter could start anywhere.</h2><p>Browse a curated introduction to Namibia&apos;s landscapes and experiences. Save sample stays and activities when you sign in, then return to your journey hub.</p><Link className="adventure-text-link" href="/explore">See destinations <span aria-hidden="true">→</span></Link></div><div className="adventure-region-stack"><Link href="/explore"><span>01 / DESERT</span><strong>Sossusvlei</strong><small>Amber dunes and wide horizons</small></Link><Link href="/attractions"><span>02 / WILDLIFE</span><strong>Etosha</strong><small>Wildlife country and waterholes</small></Link><Link href="/explore"><span>03 / COAST</span><strong>Swakopmund</strong><small>Where the desert meets the Atlantic</small></Link></div></div></section>
       </main>
 
-      <AdventureFooter />
+      <footer className="site-footer" id="footer">
+        <div className="container footer-content">
+          <Brand />
+          <p>Discover Namibia, one idea at a time.</p>
+          <nav aria-label="Footer navigation">
+            <Link href="/ai-guide">Assistant</Link>
+            <Link href="/explore">Explore</Link>
+            <Link href="/partner/apply">Partners</Link>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

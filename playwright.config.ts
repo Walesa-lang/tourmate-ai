@@ -12,9 +12,9 @@ export default defineConfig({
     headless: true,
   },
   webServer: {
-    command: "npm run start -- -p 3100",
+    command: "node --import ./tests/fixtures/supabase-preload.mjs ./node_modules/next/dist/bin/next start -p 3100",
     url: "http://127.0.0.1:3100/ai-guide",
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 180_000,
   },
 });

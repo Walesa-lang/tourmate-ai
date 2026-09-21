@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { EmptyState } from "@/app/components/traveller-ui";
 import { consentWording, fields, interests, purposes, stages, type StepData, type TravelProfile } from "@/utils/profile";
 
 const titles = ["Essential account", "Trip context", "Interests", "Travel preferences", "Optional food preferences"];
@@ -63,16 +64,17 @@ export function ProfileBuilder() {
     finally { setBusy(false); }
   }
 
-  if (state === "loading") return <p role="status">Loading your profile…</p>;
-  if (state === "auth") return <p>Sign in to save and manage your profile. <Link href="/sign-in?redirectTo=%2Fprofile">Sign in</Link> or <Link href="/ai-guide">continue with the Assistant</Link>.</p>;
-  if (state === "error") return <div><p role="alert">{status}</p><button className="button" onClick={() => { setState("loading"); void load(); }}>Retry loading profile</button></div>;
+  if (state === "loading") return <div className="traveller-panel" role="status" aria-busy="true">Loading your profile…</div>;
+  if (state === "auth") return <div><EmptyState headingLevel={2} title="A profile that travels with you" href="/sign-in?redirectTo=%2Fprofile" action="Sign in">Save your preferences and manage what the Assistant may use.</EmptyState><p className="profile-guest-action">Or <Link href="/ai-guide">continue with the Assistant</Link> without a profile.</p></div>;
+  if (state === "error") return <div className="traveller-notice"><p role="alert">{status}</p><button className="traveller-button-secondary" onClick={() => { setState("loading"); void load(); }}>Retry loading profile</button></div>;
   return <div className="profile-builder translation-managed">
-    <p>{profile.completed?.length ?? 0} of 5 stages reviewed. Skipped stages count as reviewed.</p>
+    <p className="profile-progress">{profile.completed?.length ?? 0} of 5 stages reviewed. Skipped stages count as reviewed.</p>
     <nav className="profile-steps" aria-label="Profile stages">{titles.map((title, index) => <button key={title} type="button" disabled={busy} aria-current={step === index ? "step" : undefined} onClick={() => selectStep(index)}>{index + 1}. {title}</button>)}</nav>
-    <section className="dashboard-collection-card">
+    <section className={`traveller-panel profile-stage${stage === "food" ? " profile-stage-private" : ""}`}>
       <h2 ref={heading} tabIndex={-1}>{titles[step]}</h2>
-      {stage === "account" && <p>Email: {email}. Email editing is not available here.</p>}
-      {stage === "food" && <p>Confirm ingredients directly with the provider. Recipes and cross-contamination can change. TourMate cannot guarantee allergy safety or offer medical advice. Do not enter medical conditions.</p>}
+      <p className="profile-stage-intro">{stage === "account" ? "Start with how you would like to be addressed. You can leave individual answers blank." : "Optional · Share what is useful, or skip this stage. You can review and edit it anytime."}</p>
+      {stage === "account" && <p className="profile-account-email">Email: {email}. Email editing is not available here.</p>}
+      {stage === "food" && <p className="traveller-notice">Confirm ingredients directly with the provider. Recipes and cross-contamination can change. TourMate cannot guarantee allergy safety or offer medical advice. Do not enter medical conditions.</p>}
       {stage === "food" && profile.consents?.food?.status !== "granted" && <p>To add food answers, first grant optional food consent below. You can also skip this stage.</p>}
       <form onSubmit={(event) => { event.preventDefault(); void mutate({ action: "step", stage, data: draft, ...(stage === "account" ? { full_name: name } : {}) }, true); }}>
         <fieldset disabled={busy || (stage === "food" && profile.consents?.food?.status !== "granted")}>
@@ -88,9 +90,10 @@ export function ProfileBuilder() {
         </fieldset>
         {errors.form && <p role="alert">{errors.form}</p>}
       </form>
-      {stage !== "account" && <div className="profile-actions"><button disabled={busy} onClick={() => mutate({ action: "skip", stage }, true)}>Skip this stage</button><button disabled={busy} onClick={() => mutate({ action: "delete", stage })}>Delete saved answers for this stage</button></div>}
+      <p className="traveller-status" role="status" aria-live="polite">{status}</p>
+      {stage !== "account" && <div className="profile-actions"><button className="traveller-button-secondary" disabled={busy} onClick={() => mutate({ action: "skip", stage }, true)}>Skip this stage</button><button className="traveller-button-quiet" disabled={busy} onClick={() => mutate({ action: "delete", stage })}>Delete saved answers for this stage</button></div>}
     </section>
-    <section className="dashboard-collection-card" aria-labelledby="consent-heading"><h2 id="consent-heading">Your consent and permissions</h2><p>These choices are optional and separate from device permissions. The Assistant works without a completed profile.</p>{purposes.map((purpose) => <label className="profile-consent" key={purpose}><input type="checkbox" checked={profile.consents?.[purpose]?.status === "granted"} disabled={busy || purpose === "location" || purpose === "safety"} onChange={(e) => mutate({ action: "consent", purpose, granted: e.target.checked })} /><span>{consentWording[purpose]} <small>{profile.consents?.[purpose]?.status ?? "Not granted"}</small></span></label>)}</section>
-    <p role="status" aria-live="polite">{status}</p><p><Link href="/ai-guide">Ask the Assistant</Link> · <Link href="/dashboard">Profile & saved places</Link></p>
+    <section className="traveller-panel profile-consents" aria-labelledby="consent-heading"><p className="traveller-eyebrow">You are in control</p><h2 id="consent-heading">Your consent and permissions</h2><p>These choices are optional and separate from device permissions. The Assistant works without a completed profile.</p>{purposes.map((purpose) => <label className="profile-consent" key={purpose}><input type="checkbox" checked={profile.consents?.[purpose]?.status === "granted"} disabled={busy || purpose === "location" || purpose === "safety"} onChange={(e) => mutate({ action: "consent", purpose, granted: e.target.checked })} /><span>{consentWording[purpose]} <small>{profile.consents?.[purpose]?.status ?? "Not granted"}</small></span></label>)}</section>
+    <p><Link href="/ai-guide">Ask the Assistant</Link> · <Link href="/dashboard">Profile & saved places</Link></p>
   </div>;
 }

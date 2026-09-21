@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SavedRecommendations } from "@/app/components/saved-recommendations";
+import { TravelIcon, SectionHeading } from "@/app/components/traveller-ui";
 import type { Database } from "@/utils/supabase/database.types";
 
 type SavedTrip = Pick<Database["public"]["Tables"]["saved_trips"]["Row"], "id" | "title" | "destination" | "start_date" | "end_date" | "travellers" | "budget" | "created_at">;
@@ -13,154 +14,25 @@ type DashboardContentProps = {
   savedTrips: SavedTrip[];
   favourites: Favourite[];
 };
-type IconName = "trip" | "hotel" | "attraction" | "plan" | "user";
 
-function DashboardIcon({ name }: { name: IconName }) {
-  if (name === "hotel") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V5h16v15M4 14h16M8 9h2M14 9h2M8 17h2M14 17h2" /></svg>;
-  if (name === "attraction") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7L6.8 19l1-5.8-4.2-4.1 5.8-.8L12 3Z" /></svg>;
-  if (name === "plan") return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 3v4M17 3v4M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Zm3 7h3M8 16h6" /></svg>;
-  if (name === "user") return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg>;
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5V4Zm11 0v4h3M8 12h8M8 16h5" /></svg>;
-}
-
-function EmptyCollection({ icon, title, description, action, href }: { icon: IconName; title: string; description: string; action: string; href: string }) {
-  return (
-    <div className="dashboard-empty-state">
-      <span className="dashboard-empty-icon"><DashboardIcon name={icon} /></span>
-      <h3>{title}</h3>
-      <p>{description}</p>
-      <Link className="dashboard-text-link" href={href}>{action}<span aria-hidden="true">→</span></Link>
-    </div>
-  );
-}
-
-function snapshotValue(favourite: Favourite, key: string) {
-  const snapshot = favourite.item_snapshot;
-  if (!snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return "";
-  const value = snapshot[key];
-  return typeof value === "string" ? value : "";
-}
-
-function FavouriteCollection({ favourites, type }: { favourites: Favourite[]; type: "hotel" | "attraction" }) {
-  const href = type === "hotel" ? "/hotels" : "/attractions";
-  const icon = type;
-  if (favourites.length === 0) {
-    return <EmptyCollection icon={icon} title={type === "hotel" ? "No favourite hotels yet" : "No favourite attractions yet"} description={type === "hotel" ? "Hotels you favourite will appear here." : "Attractions you favourite will appear here."} action={type === "hotel" ? "Explore hotels" : "Explore attractions"} href={href} />;
-  }
-
-  return (
-    <div className="dashboard-favourite-list">
-      {favourites.map((favourite) => (
-        <article className="dashboard-favourite-item" key={favourite.id}>
-          <span className={`dashboard-favourite-icon dashboard-favourite-icon-${type}`}><DashboardIcon name={icon} /></span>
-          <div>
-            <p>{snapshotValue(favourite, type === "hotel" ? "type" : "category") || (type === "hotel" ? "Hotel" : "Attraction")}</p>
-            <h3>{snapshotValue(favourite, "name") || favourite.item_id}</h3>
-            <span>{snapshotValue(favourite, "location")}</span>
-            <div className="dashboard-favourite-meta">
-              {snapshotValue(favourite, "price") && <small>Illustrative price: {snapshotValue(favourite, "price")}</small>}
-              {snapshotValue(favourite, "duration") && <small>{snapshotValue(favourite, "duration")}</small>}
-            </div>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
-}
-
-export function DashboardContent({ fullName, email, greetingName, plan, savedTrips, favourites }: DashboardContentProps) {
-  const planName = `${plan.charAt(0).toUpperCase()}${plan.slice(1)}`;
-  const favouriteHotels = favourites.filter((item) => item.item_type === "hotel");
-  const favouriteAttractions = favourites.filter((item) => item.item_type === "attraction");
-  const overview = [
-    { label: "Saved trips", value: String(savedTrips.length), icon: "trip" as const },
-    { label: "Favourite hotels", value: String(favouriteHotels.length), icon: "hotel" as const },
-    { label: "Favourite attractions", value: String(favouriteAttractions.length), icon: "attraction" as const },
-    { label: "Current plan", value: planName, icon: "plan" as const },
-  ];
-
-  return (
-    <main className="dashboard-main">
-      <section className="dashboard-welcome" aria-labelledby="dashboard-title">
-        <div className="dashboard-welcome-orb" aria-hidden="true" />
-        <div className="container dashboard-welcome-content">
-          <div>
-            <p className="dashboard-eyebrow"><span aria-hidden="true">✦</span>Your travel space</p>
-            <h1 id="dashboard-title"><span>Welcome back,</span> {greetingName}</h1>
-            <p>Your profile, saved places, and previous trip notes are here when you need them. Assistant conversations stay in the current browser tab.</p>
-          </div>
-          <Link className="button dashboard-primary-action" href="/ai-guide">Ask the Assistant<span aria-hidden="true">→</span></Link>
-        </div>
-      </section>
-
-      <div className="container dashboard-body">
-        <SavedRecommendations />
-        <section className="dashboard-overview" aria-labelledby="overview-title">
-          <div className="dashboard-section-heading dashboard-visually-titled"><div><p>At a glance</p><h2 id="overview-title">Your overview</h2></div></div>
-          <div className="dashboard-stat-grid">
-            {overview.map((item) => <article className="dashboard-stat" key={item.label}><span className={`dashboard-stat-icon dashboard-stat-icon-${item.icon}`}><DashboardIcon name={item.icon} /></span><div><strong>{item.value}</strong><p>{item.label}</p></div></article>)}
-          </div>
-        </section>
-
-        <div className="dashboard-content-grid">
-          <section className="dashboard-collection-card dashboard-trips-card" aria-labelledby="saved-trips-title">
-            <div className="dashboard-section-heading"><div><p>Previously saved</p><h2 id="saved-trips-title">Saved trip notes</h2></div></div>
-            {savedTrips.length === 0 ? (
-              <div className="dashboard-empty-state"><span className="dashboard-empty-icon"><DashboardIcon name="trip" /></span><h3>No saved trip notes yet</h3><p>Previously saved trips will appear here. Ask the Assistant for new Namibia ideas.</p><Link className="dashboard-text-link" href="/ai-guide">Open Assistant<span aria-hidden="true">→</span></Link></div>
-            ) : (
-              <div className="dashboard-trip-list">
-                {savedTrips.map((trip) => (
-                  <article className="dashboard-trip-item" key={trip.id}>
-                    <span className="dashboard-trip-icon"><DashboardIcon name="trip" /></span>
-                    <div className="dashboard-trip-copy">
-                      <p>{trip.destination}</p>
-                      <h3>{trip.title}</h3>
-                      <div className="dashboard-trip-meta">
-                        <span>{trip.start_date && trip.end_date ? `${trip.start_date} – ${trip.end_date}` : "Dates flexible"}</span>
-                        <span>{trip.travellers} {trip.travellers === 1 ? "traveller" : "travellers"}</span>
-                        {trip.budget && <span>{trip.budget.charAt(0).toUpperCase() + trip.budget.slice(1)}</span>}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="dashboard-collection-card" aria-labelledby="favourite-hotels-title">
-            <div className="dashboard-section-heading"><div><p>Places to stay</p><h2 id="favourite-hotels-title">Favourite hotels</h2></div></div>
-            <FavouriteCollection favourites={favouriteHotels} type="hotel" />
-          </section>
-
-          <section className="dashboard-collection-card" aria-labelledby="favourite-attractions-title">
-            <div className="dashboard-section-heading"><div><p>Things to experience</p><h2 id="favourite-attractions-title">Favourite attractions</h2></div></div>
-            <FavouriteCollection favourites={favouriteAttractions} type="attraction" />
-          </section>
-
-          <aside className="dashboard-sidebar" aria-label="Profile and account">
-            <section className="dashboard-profile-card" aria-labelledby="profile-title">
-              <div className="dashboard-card-icon"><DashboardIcon name="user" /></div>
-              <p className="dashboard-card-kicker">Your account</p>
-              <h2 id="profile-title">{fullName ? "Manage profile" : "Complete your profile"}</h2>
-              <dl className="dashboard-profile-details">
-                <div><dt>Full name</dt><dd>{fullName || "Not added yet"}</dd></div>
-                <div><dt>Email</dt><dd>{email}</dd></div>
-                <div><dt>Current plan</dt><dd>{planName}</dd></div>
-              </dl>
-              <p className="dashboard-profile-note">Email editing is not available yet.</p>
-              <Link className="dashboard-secondary-button" href="/profile">Edit travel profile & consent</Link>
-            </section>
-
-            <section className="dashboard-plan-card" aria-labelledby="plan-title">
-              <span className="dashboard-plan-badge">Current plan</span>
-              <h2 id="plan-title">{planName}</h2>
-              <p>Explore destinations and try the Assistant demo on your current plan.</p>
-              <button type="button" disabled>Upgrade — coming soon</button>
-              <small>No payment processing is active.</small>
-            </section>
-          </aside>
-        </div>
+export function DashboardContent({ greetingName, savedTrips }: DashboardContentProps) {
+  return <main className="dashboard-main traveller-dashboard">
+    <section className="dashboard-welcome" aria-labelledby="dashboard-title">
+      <div className="container dashboard-welcome-content">
+        <div><p className="traveller-eyebrow">Your Namibia travel space</p><h1 id="dashboard-title"><span>Welcome back,</span> {greetingName}</h1><p>A little inspiration, your personal preferences, and the places you want to remember.</p></div>
+        <Link className="button dashboard-primary-action" href="/ai-guide">Ask the Assistant <span aria-hidden="true">→</span></Link>
       </div>
-    </main>
-  );
+    </section>
+    <div className="container dashboard-body">
+      <section className="traveller-panel profile-summary" aria-labelledby="profile-summary-title">
+        <span className="traveller-icon-tile"><TravelIcon name="profile" /></span>
+        <div><p className="traveller-eyebrow">Made personal by you</p><h2 id="profile-summary-title">Your profile. Your choices.</h2><p>Review your travel preferences and choose what the Assistant may use. Optional details stay in your profile.</p></div>
+        <Link className="traveller-button-secondary" href="/profile">Review travel profile <span aria-hidden="true">→</span></Link>
+      </section>
+      <SavedRecommendations />
+      {savedTrips.length > 0 && <section aria-labelledby="trip-notes-title"><SectionHeading id="trip-notes-title" title="Your trip notes" eyebrow="Previously saved" /><div className="saved-grid">{savedTrips.map(trip => <article className="traveller-panel" key={trip.id}><p className="traveller-eyebrow">{trip.destination}</p><h3>{trip.title}</h3><p>{trip.start_date && trip.end_date ? `${trip.start_date} – ${trip.end_date}` : "Dates flexible"} · {trip.travellers} travellers</p></article>)}</div></section>}
+      <aside className="dashboard-support"><TravelIcon name="shield" /><div><h2>A starting point for your journey</h2><p>The Assistant is a demo. Confirm details with providers before travelling. Conversations stay in your current browser tab.</p></div><Link href="/explore">Explore Namibia <span aria-hidden="true">→</span></Link></aside>
+      <footer className="traveller-footer"><span>TourMate AI · Namibia, at your pace.</span><Link href="/partner/dashboard">Partner Portal</Link></footer>
+    </div>
+  </main>;
 }

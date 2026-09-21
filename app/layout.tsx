@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./traveller.css";
 import { LanguageProvider } from "./i18n/language-context";
 import { PwaManager } from "./components/pwa-manager";
 

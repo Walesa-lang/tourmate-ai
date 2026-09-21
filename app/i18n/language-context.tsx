@@ -49,7 +49,7 @@ function saveLanguage(value: Language) {
   languageListeners.forEach((listener) => listener());
 }
 
-function LanguageSelector({ language, setLanguage }: { language: Language; setLanguage: (value: Language) => void }) {
+export function LanguageSelector({ language, setLanguage }: { language: Language; setLanguage: (value: Language) => void }) {
   return <label className="language-selector"><span className="language-icon" aria-hidden="true">文</span><span className="language-label">{translations[language].Language}</span><select aria-label={translations[language].Language} value={language} onChange={(event) => setLanguage(event.target.value as Language)}>{languages.map((code) => <option key={code} value={code}>{languageNames[code]}</option>)}</select></label>;
 }
 
@@ -87,7 +87,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const applying = useRef(false);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setNav(document.querySelector<HTMLElement>("header .nav")));
+    const frame = requestAnimationFrame(() => setNav(document.querySelector<HTMLElement>("header .nav:not([data-language-control])")));
     return () => cancelAnimationFrame(frame);
   }, []);
 
@@ -101,7 +101,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       pendingFrame = requestAnimationFrame(() => {
         applying.current = true;
         translateTree(document.body, language);
-        setNav(document.querySelector<HTMLElement>("header .nav"));
+        setNav(document.querySelector<HTMLElement>("header .nav:not([data-language-control])"));
         applying.current = false;
         pendingFrame = null;
       });

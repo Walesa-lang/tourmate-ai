@@ -6,11 +6,10 @@ import type { User } from "@supabase/supabase-js";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { translations } from "@/app/i18n/translations";
-import { useLanguage } from "@/app/i18n/language-context";
+import { LanguageSelector, useLanguage } from "@/app/i18n/language-context";
 
 const navigationLinks = [
-  ["/ai-guide", "AI Assistant"], ["/profile", "Profile"], ["/explore", "Explore"],
-  ["/hotels", "Stays"], ["/attractions", "Activities"],
+  ["/ai-guide", "AI Assistant"], ["/explore", "Explore"], ["/profile", "Profile"],
 ] as const;
 
 function Brand() {
@@ -18,7 +17,7 @@ function Brand() {
 }
 
 export function SiteNavigation({ headerClassName }: { headerClassName: string }) {
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
@@ -33,10 +32,20 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
   const toggleRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (isOpen) mobileMenuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    if (!isOpen) return;
+    mobileMenuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    function resize() { if (window.innerWidth > 1180) setIsOpen(false); }
+    window.addEventListener("resize", resize);
+    return () => { document.body.style.overflow = previous; window.removeEventListener("resize", resize); };
   }, [isOpen]);
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isAccountOpen) accountRef.current?.querySelector<HTMLElement>('[role="menuitem"]')?.focus();
+  }, [isAccountOpen]);
 
   useEffect(() => {
     let isMounted = true;
@@ -64,6 +73,18 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
   useEffect(() => {
     if (!isOpen && !isAccountOpen) return;
     function handleKeyDown(event: KeyboardEvent) {
+      if (isOpen && event.key === "Tab") {
+        const controls = [toggleRef.current, ...Array.from(mobileMenuRef.current?.querySelectorAll<HTMLElement>('a, button:not(:disabled)') ?? [])].filter(Boolean) as HTMLElement[];
+        const first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+      if (isAccountOpen && ["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+        const items = Array.from(accountRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]:not(:disabled)') ?? []);
+        const index = items.indexOf(document.activeElement as HTMLElement);
+        const next = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 : (index + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+        event.preventDefault(); items[next]?.focus();
+      }
       if (event.key === "Escape") {
         if (isAccountOpen) {
           setIsAccountOpen(false);
@@ -75,6 +96,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
       }
     }
     function handlePointerDown(event: PointerEvent) {
+      if (isOpen && !mobileMenuRef.current?.contains(event.target as Node) && !toggleRef.current?.contains(event.target as Node)) { setIsOpen(false); toggleRef.current?.focus(); }
       if (isAccountOpen && !accountRef.current?.contains(event.target as Node)) {
         setIsAccountOpen(false);
       }
@@ -115,8 +137,8 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
   }
 
   return (
-    <header className={headerClassName}>
-      <nav className="nav container" aria-label="Main navigation">
+    <header className={`${headerClassName} traveller-header`}>
+      <nav className="nav container" aria-label="Main navigation" data-language-control>
         <Brand />
         <div className="nav-links">
           {navigationLinks.map(([href, label]) => <Link key={href} href={href} {...activeProps(href)}>{label}</Link>)}
@@ -126,12 +148,12 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
             <span className="nav-auth-loading" role="status"><span className="nav-auth-skeleton" aria-hidden="true" /><span className="sr-only">Checking sign-in status</span></span>
           ) : user ? (
             <div className="account-menu" ref={accountRef}>
-              <button ref={accountButtonRef} className="account-menu-button" type="button" aria-label={`Open account menu for ${userName}`} aria-expanded={isAccountOpen} aria-controls={accountMenuId} aria-haspopup="menu" onClick={() => setIsAccountOpen((open) => !open)}>
+              <button ref={accountButtonRef} className="account-menu-button translation-managed" type="button" aria-label={`${isAccountOpen ? "Close" : "Open"} account menu for ${userName}`} aria-expanded={isAccountOpen} aria-controls={accountMenuId} aria-haspopup="menu" onClick={() => setIsAccountOpen((open) => !open)}>
                 <span className="account-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg></span>
                 <span className="account-greeting">Hi, {firstName}</span>
                 <svg className="account-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
               </button>
-              <div id={accountMenuId} className={`account-dropdown${isAccountOpen ? " is-open" : ""}`} role="menu" aria-label="Your account">
+              <div id={accountMenuId} className={`account-dropdown${isAccountOpen ? " is-open" : ""}`} role="menu" aria-label="Your account" inert={!isAccountOpen} onBlur={event => { if (!event.currentTarget.parentElement?.contains(event.relatedTarget)) setIsAccountOpen(false); }}>
                 <div className="account-details">
                   <span className="account-dropdown-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-4 3.1-6 7-6s6.3 2 7 6" /></svg></span>
                   <div><strong>{userName}</strong><span>{userEmail}</span></div>
@@ -159,6 +181,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
           <div className="mobile-menu-links">
             {navigationLinks.map(([href, label]) => <Link key={href} href={href} onClick={closeMenu} {...activeProps(href)}>{label}</Link>)}
           </div>
+          <div className="mobile-secondary-links"><p>Discover more</p><Link href="/hotels" onClick={closeMenu}>Stays</Link><Link href="/attractions" onClick={closeMenu}>Activities</Link></div>
           {user && !isAuthLoading && (
             <section className="mobile-account" aria-labelledby={`${accountMenuId}-mobile-title`}>
               <p id={`${accountMenuId}-mobile-title`} className="mobile-account-label">Your account</p>
@@ -186,6 +209,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
           </div>
           {authError && <p className="nav-auth-error" role="alert">{authError}</p>}
         </div>
+        <LanguageSelector language={language} setLanguage={setLanguage} />
       </nav>
     </header>
   );

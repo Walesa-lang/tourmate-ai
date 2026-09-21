@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures/browser";
 
 for (const width of [320, 390, 768, 1024, 1440]) {
   test(`${width}px keeps the Namibia MVP navigation and assistant usable`, async ({ page }) => {

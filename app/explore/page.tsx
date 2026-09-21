@@ -101,6 +101,11 @@ export default function ExplorePage() {
               Browse a curated starting point for Namibia. These destination
               descriptions are guides, not live travel updates.
             </p>
+            <nav className="catalogue-navigation" aria-label="Explore catalogue">
+              <Link href="/explore" aria-current="page">Destinations</Link>
+              <Link href="/hotels">Stays</Link>
+              <Link href="/attractions">Activities</Link>
+            </nav>
           </div>
         </section>
 

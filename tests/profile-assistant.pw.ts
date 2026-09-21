@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./fixtures/browser";
 
 async function profileFixture(page: Page) {
   const profile: Record<string, unknown> = {};
@@ -95,6 +95,7 @@ test("unauthenticated profile gives sign-in and Assistant paths", async ({ page 
   await openProfile(page);
   await expect(page.locator('main a[href="/sign-in?redirectTo=%2Fprofile"]')).toBeVisible();
   await expect(page.getByRole("link", { name: "continue with the Assistant" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "A profile that travels with you" })).toBeVisible();
 });
 
 test("Assistant creates and refines a proposal and saves selected items", async ({ page }) => {

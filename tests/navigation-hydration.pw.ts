@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures/browser";
 
 test.setTimeout(120_000);
 
@@ -17,6 +17,8 @@ test("traveller navigation hydrates consistently and keeps partner operations ou
   const serverHtml = await response!.text();
   expect(serverHtml).toContain('href="/profile"');
   expect(serverHtml).not.toContain("Partner With Us");
+  expect(serverHtml).toContain('aria-label="Language"');
+  await expect(page.locator(".language-selector")).toHaveCount(1);
 
   await expect(page.locator('.nav-links a[href="/profile"]')).toHaveText("Profile");
   await expect(page.locator('header nav a[href^="/partner"], header nav a[href^="/admin"], header nav a[href="/trip-planner"]')).toHaveCount(0);

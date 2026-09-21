@@ -7,7 +7,7 @@ import type { AiGuideErrorResponse, AiGuideMessage, AiGuideSuccessResponse } fro
 import type { Recommendation } from "@/utils/ai-guide/catalogue";
 import { SaveRecommendation } from "@/app/components/saved-recommendations";
 
-type Message = { id: number; role: "user" | "assistant"; text: string; timestamp: number; emergency?: boolean; error?: boolean; recommendations?: Recommendation[]; notice?: string };
+type Message = { id: number; role: "user" | "assistant"; text: string; timestamp: number; emergency?: boolean; error?: boolean; recommendations?: Recommendation[]; notice?: string; sources?: import("@/utils/ai-guide/retrieval").Source[] };
 
 const WELCOME = "Hi! I’m your TourMate AI guide. Ask about Namibia destinations, sample stays, activities, routes, or general travel preparation. My demo answers are prewritten, so please verify details before travelling.";
 const suggestions = ["Ideas for a Namibia route", "Find accommodation", "Recommend attractions", "Travel preparation tips"];
@@ -64,12 +64,21 @@ export function AiGuideChat() {
     try {
       const response = await fetch("/api/ai-guide", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", "x-request-id": crypto.randomUUID() },
         body: JSON.stringify({ language, messages: conversation }),
         signal: controller.signal,
       });
       const result = await response.json() as AiGuideSuccessResponse | AiGuideErrorResponse;
-      if (!response.ok || !("data" in result)) throw new Error("AI Guide request failed.");
+      if (!response.ok || !("data" in result)) {
+        const message = response.status === 429 ? "Your request limit has been reached. Please wait before trying again."
+          : response.status === 401 ? "Sign in to use the controlled Assistant pilot."
+          : response.status === 409 ? "This request was already received. Please send a new question."
+          : t("TourMate AI is temporarily unavailable. Please try again in a moment.");
+        setRetry(response.status === 429 || response.status === 401 ? null : clean);
+        setMessages((current) => [...current, { id: ++messageId.current, role: "assistant", text: message, timestamp: getTimestamp(), error: true }]);
+        setAnnouncement(message);
+        return;
+      }
 
       const reply: Message = {
         id: ++messageId.current,
@@ -79,6 +88,7 @@ export function AiGuideChat() {
         emergency: result.data.emergency,
         recommendations: result.data.recommendations,
         notice: result.data.notice,
+        sources: result.data.sources,
       };
       setMessages((current) => [...current, reply]);
       setAnnouncement(t("TourMate AI replied"));
@@ -138,6 +148,7 @@ export function AiGuideChat() {
                   {message.emergency && <div className="emergency-warning" role="alert"><strong>{t("Emergency warning")}</strong>{t("Contact local emergency authorities now. Do not rely only on TourMate AI.")}</div>}
                   <p role={message.error ? "alert" : undefined}>{message.text}</p>
                   {message.notice && <p className="preview-note">{message.notice}</p>}
+                  {message.sources?.filter((source) => source.kind === "approved_record" && source.url).map((source) => <p className="preview-note" key={source.id}>Source: <a href={source.url} target="_blank" rel="noreferrer noopener">{source.label}</a>{source.verifiedAt ? ` · Record checked ${source.verifiedAt.slice(0, 10)}` : ""}</p>)}
                   {message.recommendations?.map((item) => <div className="assistant-recommendation" key={`${item.type}-${item.id}`}><strong>{item.day ? `Day ${item.day}: ` : ""}{item.name}</strong><p>{item.reason}</p><SaveRecommendation item={item} /></div>)}
                 </div>
                 {message.role === "user" && <div className="message-avatar" aria-hidden="true">{t("You")}</div>}

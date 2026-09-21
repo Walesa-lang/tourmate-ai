@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+vi.mock("server-only", () => ({}));
 vi.mock("@/utils/supabase/server", () => ({ createClient: vi.fn() }));
 import { createClient } from "@/utils/supabase/server";
 import { GET as getProfile, POST as saveProfile } from "@/app/api/profile/route";

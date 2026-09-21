@@ -28,11 +28,13 @@ export type AiGuideServiceResponse = {
   message: string;
   emergency: boolean;
   clarification?: "area" | "duration";
-  grounding?: "demo" | "illustrative_catalogue" | "unavailable";
+  grounding?: "demo" | "illustrative_catalogue" | "approved_records" | "unavailable";
+  mode?: "demonstration" | "database" | "live_provider" | "unavailable";
+  sources?: import("./retrieval").Source[];
   notice?: string;
   recommendations?: import("./catalogue").Recommendation[];
   itinerary?: { area: string; days: number; pace: string; items: import("./catalogue").Recommendation[] };
-  usage?: { provider: string; model: string };
+  usage?: { provider: string; model: string; retrievalCount?: number };
 };
 
 export type AiGuideSuccessResponse = {

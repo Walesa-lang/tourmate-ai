@@ -48,6 +48,12 @@ describe("POST /api/ai-guide", () => {
       error: { code: "MALFORMED_JSON", message: "The request body must be valid JSON." },
     });
   });
+  it("blocks cross-origin requests and disables caching", async () => {
+    const response = await POST(request(validBody(), { origin: "https://untrusted.example" }));
+    expect(response.status).toBe(403);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    expect(response.headers.get("X-Request-Id")).toMatch(/^[a-f0-9-]{36}$/);
+  });
 
   it("rejects invalid roles", async () => {
     const response = await POST(request(JSON.stringify({ language: "en", messages: [{ role: "system", content: "Hello" }] })));

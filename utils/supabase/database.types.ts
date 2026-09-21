@@ -14,6 +14,18 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      tourism_content: {
+        Row: { id: string; item_type: "hotel" | "attraction"; name: string; location: string; category: string; country_code: string; source_label: string; source_url: string; verified_at: string; approved: boolean; created_at: string };
+        Insert: { id: string; item_type: "hotel" | "attraction"; name: string; location: string; category: string; source_label: string; source_url: string; verified_at: string; approved?: boolean };
+        Update: { approved?: boolean; verified_at?: string };
+        Relationships: [];
+      };
+      assistant_usage: {
+        Row: AssistantUsage;
+        Insert: Pick<AssistantUsage, "request_id" | "user_id" | "network_hash"> & Partial<AssistantUsage>;
+        Update: Partial<Omit<AssistantUsage, "request_id" | "user_id" | "network_hash" | "created_at">>;
+        Relationships: [];
+      };
       profiles: {
         Row: {
           id: string;
@@ -199,6 +211,14 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      admit_assistant_request: {
+        Args: { p_request: string; p_user: string; p_network: string; p_minute: number; p_day: number; p_ip_minute: number };
+        Returns: string;
+      };
+      assistant_usage_summary: {
+        Args: Record<string, never>;
+        Returns: { state: string; provider: string; requests: number; estimated_cost_usd: number | null; unknown_cost_requests: number; average_latency_ms: number }[];
+      };
       update_travel_profile: {
         Args: { p_action: string; p_payload: Json };
         Returns: Json;
@@ -216,4 +236,12 @@ export type Database = {
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
+};
+
+export type AssistantUsage = {
+  request_id: string; user_id: string; network_hash: string; created_at: string; completed_at: string | null;
+  provider: "demo" | "openai" | "gemini"; model: string; request_type: "chat" | "itinerary" | "recommendation" | "save" | "remove";
+  state: "reserved" | "success" | "fallback" | "validation_failure" | "timeout" | "cancelled" | "quota_rejection" | "provider_failure" | "unavailable";
+  input_tokens: number | null; output_tokens: number | null; estimated_cost_usd: number | null; pricing_version: string | null;
+  latency_ms: number; retrieval_count: number; tool_count: number; environment: "development" | "test" | "preview" | "production"; app_version: string;
 };

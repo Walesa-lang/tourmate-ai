@@ -2,6 +2,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 Traveller MVP journeys, consent/data boundaries, local database tests, migration review commands and the manual pilot checklist are documented in [MVP foundations](docs/MVP-FOUNDATIONS.md).
 
+The next server-side Assistant gateway, retrieval, quota/telemetry migration and controlled-pilot runbook are documented in [Assistant pilot](docs/ASSISTANT-PILOT.md).
+
 ## Getting Started
 
 First, run the development server:

@@ -36,6 +36,62 @@ async function rpc(action: string, payload: object) {
 }
 
 describe("executed migrations and PostgreSQL RLS", () => {
+  it("does not expose another account's saved trip history", async () => {
+    await db.query("insert into public.saved_trips(user_id,title,destination) values ($1,'Private trip','Windhoek')", [a]);
+    await db.query("select set_config('request.jwt.claim.sub',$1,true)", [b]);
+    expect((await db.query("select * from public.saved_trips")).rows).toHaveLength(0);
+    expect((await db.query("delete from public.saved_trips returning id")).rows).toHaveLength(0);
+  });
+  it("admits atomically, rejects duplicate IDs and enforces quota", async () => {
+    await db.exec("set local role service_role");
+    const args = [a, a, "a".repeat(64), 1, 5, 5];
+    const sql = "select public.admit_assistant_request($1,$2,$3,$4,$5,$6) as state";
+    expect((await db.query(sql, args)).rows).toEqual([{ state: "reserved" }]);
+    expect((await db.query(sql, args)).rows).toEqual([{ state: "duplicate" }]);
+    expect((await db.query(sql, [b, ...args.slice(1)])).rows).toEqual([{ state: "quota_rejection" }]);
+    expect((await db.query("select * from public.assistant_usage")).rows).toHaveLength(2);
+  });
+  it("denies traveller quota admission and metric forgery", async () => {
+    await expect(db.query("select public.admit_assistant_request($1,$2,$3,10,100,60)", [a, a, "a".repeat(64)])).rejects.toThrow(/permission denied/);
+  });
+  it("denies traveller telemetry INSERT", async () => {
+    await expect(db.query("insert into public.assistant_usage(request_id,user_id,network_hash) values ($1,$1,$2)", [a, "a".repeat(64)])).rejects.toThrow(/permission denied/);
+  });
+  it.each(["update public.assistant_usage set state='success'", "delete from public.assistant_usage"])("denies traveller telemetry mutation: %s", async (sql) => {
+    await expect(db.query(sql)).rejects.toThrow(/permission denied/);
+  });
+  it("denies anonymous tourism and telemetry reads", async () => {
+    await db.exec("set local role anon");
+    await expect(db.query("select * from public.assistant_usage")).rejects.toThrow(/permission denied/);
+  });
+  it("restricts usage reads and reporting to administrators", async () => {
+    await db.exec("set local role service_role");
+    await db.query("insert into public.assistant_usage(request_id,user_id,network_hash) values ($1,$1,$2)", [a, "a".repeat(64)]);
+    await db.exec("set local role authenticated");
+    expect((await db.query("select * from public.assistant_usage")).rows).toHaveLength(0);
+    expect((await db.query("select * from public.assistant_usage_summary()")).rows).toHaveLength(0);
+    await db.exec("set local role service_role");
+    await db.query("insert into public.admin_users(user_id) values ($1)", [b]);
+    await db.exec("set local role authenticated");
+    await db.query("select set_config('request.jwt.claim.sub',$1,true)", [b]);
+    expect((await db.query("select * from public.assistant_usage_summary()")).rows).toHaveLength(1);
+  });
+  it("exposes only approved tourism content and denies client approval", async () => {
+    await db.exec("set local role service_role");
+    await db.query("insert into public.tourism_content(id,item_type,name,location,category,source_label,source_url,verified_at,approved) values ('approved','attraction','Fixture','Windhoek','Culture','Fixture','https://example.test',now(),true),('draft','hotel','Draft','Windhoek','Stay','Fixture','https://example.test',now(),false)");
+    await db.exec("set local role authenticated");
+    expect((await db.query("select id from public.tourism_content")).rows).toEqual([{ id: "approved" }]);
+    await expect(db.query("update public.tourism_content set approved=true")).rejects.toThrow(/permission denied/);
+  });
+  it("cascades telemetry, consent, profile and saved data on account deletion", async () => {
+    await rpc("consent", { purpose: "food", granted: true });
+    await db.query("insert into public.favourites(user_id,item_type,item_id) values ($1,'hotel','fixture')", [a]);
+    await db.exec("set local role service_role");
+    await db.query("insert into public.assistant_usage(request_id,user_id,network_hash) values ($1,$1,$2)", [a, "a".repeat(64)]);
+    await db.exec("reset role");
+    await db.query("delete from auth.users where id=$1", [a]);
+    for (const [table, column] of [["profiles", "id"], ["favourites", "user_id"], ["assistant_usage", "user_id"]]) expect((await db.query(`select * from public.${table} where ${column}=$1`, [a])).rows).toHaveLength(0);
+  });
   it("restricts profile SELECT and UPDATE to the authenticated owner", async () => {
     expect((await db.query("select id from public.profiles")).rows).toEqual([{ id: a }]);
     expect((await db.query("update public.profiles set full_name='Intruder' where id=$1 returning id", [b])).rows).toEqual([]);

@@ -36,19 +36,14 @@ function detectAccommodationDestination(message: string) {
   return accommodationDestinations.find(([, pattern]) => pattern.test(message))?.[0];
 }
 
-function formatProperties(properties: HotelProperty[], language: Language) {
-  return properties.map((property) => {
-    if (language === "fr") return `${property.name} — ${property.type}, note ${property.rating}, ${property.price} par nuit`;
-    if (language === "es") return `${property.name} — ${property.type}, valoración ${property.rating}, ${property.price} por noche`;
-    if (language === "pt") return `${property.name} — ${property.type}, avaliação ${property.rating}, ${property.price} por noite`;
-    if (language === "zh") return `${property.name} — ${property.type}，评分 ${property.rating}，每晚 ${property.price}`;
-    return `${property.name} — ${property.type}, rating ${property.rating}, ${property.price} per night`;
-  }).join("; ");
+function formatProperties(properties: HotelProperty[]) {
+  // Sample amounts and ratings are not tourism facts and must not enter chat.
+  return properties.map((property) => `${property.name} — ${property.type}`).join("; ");
 }
 
 function getDestinationAccommodationResponse(destination: AccommodationDestination, language: Language) {
   const listings = hotelProperties.filter((property) => property.location === destination);
-  const formattedListings = formatProperties(listings, language);
+  const formattedListings = formatProperties(listings);
 
   if (language === "fr") return `Près de ${destination}, le catalogue de démonstration TourMate propose : ${formattedListings}. Ces annonces, prix, notes et disponibilités sont des informations de démonstration ; confirmez les détails actuels et la disponibilité directement avant de réserver.`;
   if (language === "es") return `Cerca de ${destination}, el catálogo de demostración de TourMate incluye: ${formattedListings}. Estos anuncios, precios, valoraciones y la disponibilidad son información de demostración; confirma los datos actuales y la disponibilidad directamente antes de reservar.`;

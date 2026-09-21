@@ -35,3 +35,7 @@ it("does not load any account context for anonymous requests", async () => {
   expect((await respondWithContext(input, new Request("http://localhost"))).clarification).toBe("area");
   expect(createClient).not.toHaveBeenCalled();
 });
+it("does not expose private profile fields in replies, sources or usage", async () => {
+  single.mockResolvedValue({ data: { travel_profile: { trip: { area: "Windhoek", origin: "PRIVATE-ORIGIN" }, food: { allergies: "PRIVATE-ALLERGY" }, preferences: { accessibility: "PRIVATE-HEALTH" }, consents: { personalisation: { status: "granted" }, food: { status: "granted" } } } }, error: null });
+  expect(JSON.stringify(await respondWithContext(input, request()))).not.toMatch(/PRIVATE-|allergies|consents|origin/);
+});

@@ -37,7 +37,7 @@ describe("AI Guide demo service", () => {
     });
 
     expect(response.message).toContain("Etosha Safari Lodge");
-    expect(response.message).toContain("N$3,250");
+    expect(response.message).not.toContain("N$3,250");
     expect(response.message).toContain("demo information");
     expect(response.message).not.toContain("Windhoek has city hotels");
     expect(response.message).not.toContain("Swakopmund has coastal stays");
@@ -58,8 +58,8 @@ describe("AI Guide demo service", () => {
       });
 
       expect(response.message).toContain("Etosha Safari Lodge");
-      expect(response.message).toContain("4.9");
-      expect(response.message).toContain("N$3,250");
+      expect(response.message).not.toContain("4.9");
+      expect(response.message).not.toContain("N$3,250");
       expect(response.message).toContain(disclaimer);
     },
   );

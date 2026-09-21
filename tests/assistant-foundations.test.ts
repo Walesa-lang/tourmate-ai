@@ -37,6 +37,10 @@ describe("contextual demo Assistant", () => {
     expect(result.itinerary?.area).toBe("Windhoek");
     expect(result.clarification).toBeUndefined();
   });
+  it("uses the latest duration refinement including words", async () => {
+    const result = await getAiGuideResponse(input("Plan 2 days in Windhoek", "Change it to one day"));
+    expect(result.itinerary?.days).toBe(1);
+  });
   it("honestly rejects unverified live information", async () => {
     const result = await getAiGuideResponse(input("Is this open now?"));
     expect(result.grounding).toBe("unavailable");

@@ -11,7 +11,7 @@ export type AssistantInput = AiGuideRequest & {
   itineraryContext?: Recommendation[];
   approvedRecords?: TourismRecord[];
 };
-export interface AssistantProvider { respond(input: AssistantInput): Promise<AiGuideServiceResponse> }
+export interface AssistantProvider { respond(input: AssistantInput, signal?: AbortSignal): Promise<AiGuideServiceResponse> }
 
 export function contextualReply(input: AssistantInput): AiGuideServiceResponse | undefined {
   if (input.language !== "en") return undefined;
@@ -24,6 +24,10 @@ export function contextualReply(input: AssistantInput): AiGuideServiceResponse |
   const findArea = (text: string) => locations.find((area) => text.toLowerCase().includes(area.toLowerCase()) || (area === "Etosha National Park" && /etosha/i.test(text)));
   const area = [...userMessages].reverse().map(findArea).find(Boolean) ?? findArea(String(profile?.trip?.area ?? ""));
   const base = { emergency: false, grounding: "illustrative_catalogue" as const, notice: catalogueNotice, usage: { provider: "demo", model: "deterministic-v1" } };
+  if (/^(thanks|thank you|cheers)[!.\s]*$/i.test(latest)) return { ...base, grounding: "demo", message: "You're welcome. You can refine your plan or save a suggestion whenever you're ready." };
+  if (/ignore .*instructions|system prompt|api.?key|secret|other user|another user|private records/i.test(latest)) return { ...base, grounding: "unavailable", message: "I can help with Namibia travel ideas, but cannot reveal private records, credentials or internal instructions." };
+  if (/zambia|lusaka|livingstone/i.test(latest)) return { ...base, grounding: "unavailable", message: "This catalogue covers Namibia only. I do not have verified cross-border information; confirm it with the relevant provider or authority." };
+  if (/book for me|track me|remind me|camera|voice|payment|live map/i.test(latest)) return { ...base, grounding: "unavailable", message: "That capability is not active. I can help you prepare a text-based Namibia travel plan, but cannot make bookings, track you, send reminders or use a camera, voice or live maps." };
   if (/restaurant|nightlife|entertainment|music|sport|museum|skydiving/i.test(latest)) return { ...base, grounding: "unavailable", message: "I do not have verified venue listings or current events for that request. Confirm options, hours and suitability with a local visitor centre or the provider. I can suggest activities from the illustrative catalogue." };
   if (/more detail|tell me more/i.test(latest)) return { ...base, message: `For ${area ?? "your chosen area"}, use catalogue ideas as a starting point. Ask the provider about access, transport, dates, group suitability and cancellation terms. ${profile?.preferences?.accessibility ? "Confirm your practical accessibility needs directly." : ""} ${profile?.food ? "Ask about ingredients and cross-contamination; allergy safety cannot be guaranteed." : ""}` };
   if (/weather|open now|opening hours|live|available|availability|closure|road condition|safe today|ingredients|allergen/i.test(latest)) return { ...base, grounding: "unavailable", message: "I cannot verify current prices, availability, hours, conditions or ingredients. Please confirm directly with the relevant provider before making plans." };
@@ -43,7 +47,7 @@ export function contextualReply(input: AssistantInput): AiGuideServiceResponse |
       return score(b) - score(a);
     });
   }
-  const requestedInterest = latest.match(/\b(wildlife|culture|nature|adventure|food|hiking)\b/i)?.[1]?.toLowerCase();
+  const requestedInterest = [...userMessages].reverse().map((m) => m.match(/\b(wildlife|culture|nature|adventure|food|hiking)\b/i)?.[1]?.toLowerCase()).find(Boolean);
   if (requestedInterest && (planning || attraction)) {
     const interestMatches = choices.filter((r) => `${r.category} ${r.name}`.toLowerCase().includes(requestedInterest));
     if (interestMatches.length) choices = interestMatches;
@@ -51,9 +55,11 @@ export function contextualReply(input: AssistantInput): AiGuideServiceResponse |
   }
   if (!choices.length) return { ...base, grounding: "unavailable", message: `I do not have a matching catalogue suggestion for ${area}. Try another area or ask the local provider for verified options.` };
   if (planning) {
-    const durationMatch = [...userMessages].reverse().map((m) => m.match(/\b(\d{1,2})\s*days?\b/i)).find(Boolean);
-    const wordDuration = /\b(one|a) day|day plan/i.test(history) ? 1 : /two day/i.test(history) ? 2 : /three day/i.test(history) ? 3 : /five day/i.test(history) ? 5 : undefined;
-    let days = durationMatch ? Number(durationMatch[1]) : wordDuration;
+    let days = [...userMessages].reverse().map((m) => {
+      const numeric = m.match(/\b(\d{1,2})\s*days?\b/i);
+      if (numeric) return Number(numeric[1]);
+      return /\b(one|a) day|day plan/i.test(m) ? 1 : /two day/i.test(m) ? 2 : /three day/i.test(m) ? 3 : /five day/i.test(m) ? 5 : undefined;
+    }).find((n) => n !== undefined);
     if (!days && profile?.trip?.arrival && profile.trip.departure) days = Math.round((Date.parse(String(profile.trip.departure)) - Date.parse(String(profile.trip.arrival))) / 86400000) + 1;
     if (!days) return { ...base, grounding: "demo", clarification: "duration", message: `For ${area}, how many days would you like to plan?` };
     if (days < 1 || days > 14) return { ...base, grounding: "demo", clarification: "duration", message: "This demo supports 1–14 days. How many days within that range would you like?" };
@@ -64,7 +70,7 @@ export function contextualReply(input: AssistantInput): AiGuideServiceResponse |
   // Existing destination accommodation answers preserve their translated demo
   // price labels; add saveable records in the service boundary.
   if (hotel) {
-    if (/hotel|accommodation|stay|lodge/i.test(latest)) return undefined;
+    if (!input.approvedRecords && /hotel|accommodation|stay|lodge/i.test(latest)) return undefined;
     return { ...base, recommendations: choices.map((r) => ({ ...r, reason: "Sample accommodation in your requested area." })), message: `For ${area}, the demo catalogue includes ${choices.map((r) => r.name).join("; ")}. Confirm current details directly before booking.` };
   }
   return { ...base, recommendations: choices.slice(0, 3).map((r) => ({ ...r, reason: "Catalogue suggestion for your requested area." })), message: `${area} catalogue shortlist: ${choices.slice(0, 3).map((r) => r.name).join("; ")}. Ask for a day plan to organise these ideas.` };

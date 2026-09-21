@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SavedRecommendations } from "@/app/components/saved-recommendations";
 import type { Database } from "@/utils/supabase/database.types";
 
 type SavedTrip = Pick<Database["public"]["Tables"]["saved_trips"]["Row"], "id" | "title" | "destination" | "start_date" | "end_date" | "travellers" | "budget" | "created_at">;
@@ -93,6 +94,7 @@ export function DashboardContent({ fullName, email, greetingName, plan, savedTri
       </section>
 
       <div className="container dashboard-body">
+        <SavedRecommendations />
         <section className="dashboard-overview" aria-labelledby="overview-title">
           <div className="dashboard-section-heading dashboard-visually-titled"><div><p>At a glance</p><h2 id="overview-title">Your overview</h2></div></div>
           <div className="dashboard-stat-grid">
@@ -146,8 +148,7 @@ export function DashboardContent({ fullName, email, greetingName, plan, savedTri
                 <div><dt>Current plan</dt><dd>{planName}</dd></div>
               </dl>
               <p className="dashboard-profile-note">Email editing is not available yet.</p>
-              <button className="dashboard-secondary-button" type="button" disabled aria-describedby="profile-action-note">Profile editing coming soon</button>
-              <span id="profile-action-note" className="sr-only">Profile editing will be available in a future update.</span>
+              <Link className="dashboard-secondary-button" href="/profile">Edit travel profile & consent</Link>
             </section>
 
             <section className="dashboard-plan-card" aria-labelledby="plan-title">

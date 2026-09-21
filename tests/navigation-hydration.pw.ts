@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.setTimeout(120_000);
 
-test("the server and hydrated client render the same partners navigation label", async ({ page }) => {
+test("traveller navigation hydrates consistently and keeps partner operations outside it", async ({ page }) => {
   const hydrationErrors: string[] = [];
   page.on("console", (message) => {
     if (message.type() === "error" && /hydration|did not match/i.test(message.text())) {
@@ -15,11 +15,11 @@ test("the server and hydrated client render the same partners navigation label",
   expect(response).not.toBeNull();
 
   const serverHtml = await response!.text();
-  expect(serverHtml).toMatch(/href="\/partner\/dashboard"[^>]*><span class="nav-partners">Partners<\/span>/);
+  expect(serverHtml).toContain('href="/profile"');
   expect(serverHtml).not.toContain("Partner With Us");
 
-  const partnersLink = page.locator('.nav-links a[href="/partner/dashboard"]');
-  await expect(partnersLink).toHaveText("Partners");
-  await expect(partnersLink.locator(".nav-partners")).toHaveCSS("white-space", "nowrap");
+  await expect(page.locator('.nav-links a[href="/profile"]')).toHaveText("Profile");
+  await expect(page.locator('header nav a[href^="/partner"], header nav a[href^="/admin"], header nav a[href="/trip-planner"]')).toHaveCount(0);
+  await expect(page.locator('footer a[href="/partner/apply"]')).toBeVisible();
   expect(hydrationErrors).toEqual([]);
 });

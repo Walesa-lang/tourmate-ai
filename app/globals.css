@@ -3824,3 +3824,26 @@ h1 span {
   .pwa-install-button,
   .pwa-dismiss-button { grid-column: 1 / -1; width: 100%; white-space: normal; }
 }
+/* Progressive profile and Assistant additions use the restored card system. */
+.profile-main { padding-block: 48px; max-width: 960px; }
+.profile-main h1 { font-size: clamp(1.8rem, 5vw, 2.6rem); }
+.profile-builder { display: grid; gap: 24px; margin-top: 24px; min-width: 0; }
+.profile-builder .dashboard-collection-card { min-width: 0; padding: clamp(16px, 4vw, 32px); }
+.profile-steps, .profile-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.profile-builder button, .recommendation-save button, .saved-recommendation button { min-height: 44px; padding: 10px 14px; border: 1px solid #bbc9c3; border-radius: 8px; white-space: normal; overflow-wrap: anywhere; }
+.profile-steps [aria-current] { background: var(--navy); color: white; }
+.profile-builder h2 { font-size: 1.3rem; font-weight: 750; margin-bottom: 12px; }
+.profile-builder fieldset { border: 0; padding: 16px 0; display: grid; gap: 18px; min-width: 0; }
+.profile-builder label { display: grid; gap: 6px; font-weight: 500; }
+.profile-builder input:not([type=checkbox]), .profile-builder select { width: 100%; min-width: 0; min-height: 44px; padding: 10px; border: 1px solid #889c94; border-radius: 8px; background: white; color: #172b23; font: inherit; }
+.profile-interests { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+.profile-interests label, .profile-builder .profile-consent { display: flex; align-items: start; gap: 10px; min-height: 44px; padding-block: 10px; }
+.profile-builder input[type=checkbox] { width: 22px; height: 22px; flex-shrink: 0; margin-top: 2px; }
+.profile-consent small { display: block; font-weight: normal; }
+.profile-error { color: #a12828; }
+.profile-builder :focus-visible, .recommendation-save :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+.profile-builder button:disabled { opacity: .65; cursor: not-allowed; }
+.recommendation-save { display: grid; gap: 8px; margin-block: 8px; }
+.assistant-recommendation, .saved-recommendation { padding: 14px 0; border-top: 1px solid #d7e1dc; overflow-wrap: anywhere; min-width: 0; }
+.assistant-recommendation button { max-width: 100%; color: var(--navy); background: white; }
+.profile-main, .chat-composer { padding-bottom: max(24px, env(safe-area-inset-bottom)); }

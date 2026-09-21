@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           id: string;
           full_name: string | null;
+          travel_profile: Json;
           plan: "free" | "plus" | "premium";
           created_at: string;
           updated_at: string;
@@ -198,6 +199,10 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      update_travel_profile: {
+        Args: { p_action: string; p_payload: Json };
+        Returns: Json;
+      };
       review_business_application: {
         Args: {
           p_application_id: string;

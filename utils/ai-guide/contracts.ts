@@ -27,6 +27,12 @@ export type AiGuideRequest = {
 export type AiGuideServiceResponse = {
   message: string;
   emergency: boolean;
+  clarification?: "area" | "duration";
+  grounding?: "demo" | "illustrative_catalogue" | "unavailable";
+  notice?: string;
+  recommendations?: import("./catalogue").Recommendation[];
+  itinerary?: { area: string; days: number; pace: string; items: import("./catalogue").Recommendation[] };
+  usage?: { provider: string; model: string };
 };
 
 export type AiGuideSuccessResponse = {

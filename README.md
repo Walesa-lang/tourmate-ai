@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+Traveller MVP journeys, consent/data boundaries, local database tests, migration review commands and the manual pilot checklist are documented in [MVP foundations](docs/MVP-FOUNDATIONS.md).
+
 ## Getting Started
 
 First, run the development server:

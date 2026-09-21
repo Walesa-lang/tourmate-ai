@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "../i18n/language-context";
 import { translations } from "../i18n/translations";
 import type { AiGuideErrorResponse, AiGuideMessage, AiGuideSuccessResponse } from "@/utils/ai-guide/contracts";
+import type { Recommendation } from "@/utils/ai-guide/catalogue";
+import { SaveRecommendation } from "@/app/components/saved-recommendations";
 
-type Message = { id: number; role: "user" | "assistant"; text: string; timestamp: number; emergency?: boolean; error?: boolean };
+type Message = { id: number; role: "user" | "assistant"; text: string; timestamp: number; emergency?: boolean; error?: boolean; recommendations?: Recommendation[]; notice?: string };
 
 const WELCOME = "Hi! I’m your TourMate AI guide. Ask about Namibia destinations, sample stays, activities, routes, or general travel preparation. My demo answers are prewritten, so please verify details before travelling.";
 const suggestions = ["Ideas for a Namibia route", "Find accommodation", "Recommend attractions", "Travel preparation tips"];
@@ -26,6 +28,7 @@ export function AiGuideChat() {
   const activeRequestRef = useRef<AbortController | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [retry, setRetry] = useState<string | null>(null);
 
   useEffect(() => {
     setMessages([{ id: ++messageId.current, role: "assistant", text: t(WELCOME), timestamp: getTimestamp() }]);
@@ -42,13 +45,17 @@ export function AiGuideChat() {
   async function submitMessage(value: string) {
     const clean = value.trim();
     if (!clean || activeRequestRef.current) return;
+    if (clean.length > 2000) { setAnnouncement("Please keep your message under 2,000 characters."); return; }
+    setRetry(null);
 
     const controller = new AbortController();
     activeRequestRef.current = controller;
     const userMessage: Message = { id: ++messageId.current, role: "user", text: clean, timestamp: getTimestamp() };
     const conversation: AiGuideMessage[] = [...messages, userMessage]
-      .slice(-20)
+      .filter((message) => !message.error)
+      .slice(-12)
       .map((message) => ({ role: message.role, content: message.text }));
+    while (conversation.length > 1 && conversation.reduce((sum, message) => sum + message.content.length, 0) > 10_000) conversation.shift();
     setMessages((current) => [...current, userMessage]);
     setDraft("");
     setThinking(true);
@@ -70,11 +77,14 @@ export function AiGuideChat() {
         text: result.data.message,
         timestamp: getTimestamp(),
         emergency: result.data.emergency,
+        recommendations: result.data.recommendations,
+        notice: result.data.notice,
       };
       setMessages((current) => [...current, reply]);
       setAnnouncement(t("TourMate AI replied"));
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
+      setRetry(clean);
       setMessages((current) => [...current, {
         id: ++messageId.current,
         role: "assistant",
@@ -99,6 +109,7 @@ export function AiGuideChat() {
     setThinking(false);
     setDraft("");
     setMessages([{ id: ++messageId.current, role: "assistant", text: t(WELCOME), timestamp: getTimestamp() }]);
+    setRetry(null);
     setAnnouncement(t("Conversation cleared"));
     requestAnimationFrame(() => inputRef.current?.focus());
   }
@@ -126,6 +137,8 @@ export function AiGuideChat() {
                   <div className="message-meta"><span>{message.role === "user" ? t("You") : "TourMate AI"}</span><time dateTime={new Date(message.timestamp).toISOString()}>{formatTime(message.timestamp)}</time></div>
                   {message.emergency && <div className="emergency-warning" role="alert"><strong>{t("Emergency warning")}</strong>{t("Contact local emergency authorities now. Do not rely only on TourMate AI.")}</div>}
                   <p role={message.error ? "alert" : undefined}>{message.text}</p>
+                  {message.notice && <p className="preview-note">{message.notice}</p>}
+                  {message.recommendations?.map((item) => <div className="assistant-recommendation" key={`${item.type}-${item.id}`}><strong>{item.day ? `Day ${item.day}: ` : ""}{item.name}</strong><p>{item.reason}</p><SaveRecommendation item={item} /></div>)}
                 </div>
                 {message.role === "user" && <div className="message-avatar" aria-hidden="true">{t("You")}</div>}
               </article>
@@ -140,18 +153,19 @@ export function AiGuideChat() {
           </div>
 
           <div className="chat-composer">
+            {retry && <button type="button" disabled={thinking} onClick={() => submitMessage(retry)}>Retry last question</button>}
             <div className="suggestions" aria-label={t("Suggested questions")}>
               {suggestions.map((suggestion) => <button type="button" key={suggestion} onClick={() => submitMessage(t(suggestion))} disabled={thinking}>{t(suggestion)}</button>)}
             </div>
             <form className="message-form" onSubmit={(event) => { event.preventDefault(); submitMessage(draft); }}>
               <label htmlFor="travel-question">{t("Ask TourMate AI about your trip")}</label>
               <div className="message-input-row">
-                <textarea ref={inputRef} id="travel-question" name="travelQuestion" rows={2} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submitMessage(draft); } }} placeholder={t("Ask TourMate AI anything about your trip")} disabled={thinking} aria-describedby="composer-help" />
+                <textarea ref={inputRef} id="travel-question" name="travelQuestion" rows={2} maxLength={2000} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submitMessage(draft); } }} placeholder={t("Ask TourMate AI anything about your trip")} disabled={thinking} aria-describedby="composer-help" />
                 <button className="button send-button" type="submit" disabled={!draft.trim() || thinking}>{thinking ? t("Thinking…") : t("Send")}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 9-18 9 4-9-4-9Zm4 9h14" /></svg></button>
               </div>
             </form>
             <p id="composer-help" className="preview-note">{t("Press Enter to send. Use Shift+Enter for a new line.")}</p>
-            <p className="demo-privacy-note">{t("Demo only. Messages stay in this browser tab and are not saved to your profile or sent to a live AI.")}</p>
+            <p className="demo-privacy-note">{t("Demo only. Messages are processed by the demo server, kept in this tab and not saved or sent to a live AI. Only catalogue items you choose to save are stored.")}</p>
           </div>
         </section>
 

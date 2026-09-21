@@ -5,12 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { PARTNERS_NAV_LABEL } from "@/app/i18n/translations";
+import { translations } from "@/app/i18n/translations";
+import { useLanguage } from "@/app/i18n/language-context";
 
 const navigationLinks = [
-  ["/ai-guide", "AI Assistant"], ["/explore", "Explore"],
+  ["/ai-guide", "AI Assistant"], ["/profile", "Profile"], ["/explore", "Explore"],
   ["/hotels", "Stays"], ["/attractions", "Activities"],
-  ["/partner/dashboard", PARTNERS_NAV_LABEL],
 ] as const;
 
 function Brand() {
@@ -18,6 +18,7 @@ function Brand() {
 }
 
 export function SiteNavigation({ headerClassName }: { headerClassName: string }) {
+  const { language } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
   const supabase = useMemo(() => createClient(), []);
@@ -30,6 +31,10 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
   const menuId = useId();
   const accountMenuId = useId();
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (isOpen) mobileMenuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+  }, [isOpen]);
   const accountButtonRef = useRef<HTMLButtonElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
 
@@ -114,8 +119,7 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
       <nav className="nav container" aria-label="Main navigation">
         <Brand />
         <div className="nav-links">
-          {navigationLinks.map(([href, label]) => <Link key={href} href={href} {...activeProps(href)}>{href === "/partner/dashboard" ? <span className="nav-partners">{label}</span> : label}</Link>)}
-          {user && <Link href="/dashboard" {...activeProps("/dashboard")}>Profile</Link>}
+          {navigationLinks.map(([href, label]) => <Link key={href} href={href} {...activeProps(href)}>{label}</Link>)}
         </div>
         <div className="nav-actions">
           {isAuthLoading ? (
@@ -148,13 +152,12 @@ export function SiteNavigation({ headerClassName }: { headerClassName: string })
           )}
           <Link className="button button-small" href="/ai-guide">Ask the Assistant <span aria-hidden="true">→</span></Link>
         </div>
-        <button ref={toggleRef} className={`mobile-menu-toggle${isOpen ? " is-open" : ""}`} type="button" aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={isOpen} aria-controls={menuId} onClick={() => setIsOpen((open) => !open)}>
+        <button ref={toggleRef} className={`mobile-menu-toggle translation-managed${isOpen ? " is-open" : ""}`} type="button" aria-label={translations[language][isOpen ? "Close navigation menu" : "Open navigation menu"] ?? (isOpen ? "Close navigation menu" : "Open navigation menu")} aria-expanded={isOpen} aria-controls={menuId} onClick={() => setIsOpen((open) => !open)}>
           <span /><span /><span />
         </button>
-        <div id={menuId} className={`mobile-menu${isOpen ? " is-open" : ""}`}>
+        <div ref={mobileMenuRef} id={menuId} className={`mobile-menu${isOpen ? " is-open" : ""}`} inert={!isOpen}>
           <div className="mobile-menu-links">
             {navigationLinks.map(([href, label]) => <Link key={href} href={href} onClick={closeMenu} {...activeProps(href)}>{label}</Link>)}
-            {user && <Link href="/dashboard" onClick={closeMenu} {...activeProps("/dashboard")}>Profile</Link>}
           </div>
           {user && !isAuthLoading && (
             <section className="mobile-account" aria-labelledby={`${accountMenuId}-mobile-title`}>

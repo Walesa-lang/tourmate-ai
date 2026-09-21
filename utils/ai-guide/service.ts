@@ -2,12 +2,14 @@ import "server-only";
 
 import type { Language } from "@/app/i18n/translations";
 import { hotelProperties, type HotelProperty } from "@/app/hotels/catalogue";
-import type { AiGuideRequest, AiGuideServiceResponse } from "./contracts";
+import type { AiGuideServiceResponse } from "./contracts";
+import { contextualReply, type AssistantInput, type AssistantProvider } from "./conversation";
+import { catalogueNotice, tourismRecords } from "./catalogue";
 
 export type DemoTopic = "emergency" | "hotel" | "attraction" | "transport" | "budget" | "namibia" | "planning" | "greeting" | "general";
 
 const topicPatterns: Array<[DemoTopic, RegExp]> = [
-  ["emergency", /emergency|danger|police|ambulance|hospital|urgent|lost|help me|urgence|danger|police|ambulance|h[oô]pital|urgente|peligro|emerg[eê]ncia|socorro|紧急|危险|警察|救护车|医院/i],
+  ["emergency", /emergency|danger|police|ambulance|hospital|urgent|lost|urgence|danger|police|ambulance|h[oô]pital|urgente|peligro|emerg[eê]ncia|socorro|紧急|危险|警察|救护车|医院/i],
   ["hotel", /hotel|hostel|lodge|stay|accommodation|room|h[oô]tel|auberge|h[eé]bergement|alojamiento|hospedagem|acomoda[cç][aã]o|酒店|住宿|旅馆/i],
   ["attraction", /attraction|sight|visit|activity|things to do|attraction|visiter|activit[eé]|atracci[oó]n|actividad|atra[cç][aã]o|atividade|景点|游览|活动/i],
   ["transport", /transport|bus|taxi|drive|car|train|flight|getting around|transporte|autob[uú]s|ônibus|t[aá]xi|交通|公交|出租车|火车|航班/i],
@@ -122,7 +124,7 @@ const demoResponses: Record<DemoTopic, Record<Language, string>> = {
 };
 
 export async function getAiGuideResponse(
-  request: AiGuideRequest,
+  request: AssistantInput,
 ): Promise<AiGuideServiceResponse> {
   const latestUserMessage = [...request.messages]
     .reverse()
@@ -133,8 +135,12 @@ export async function getAiGuideResponse(
   }
 
   const topic = detectDemoTopic(latestUserMessage.content);
+  if (topic !== "emergency") {
+    const contextual = contextualReply(request);
+    if (contextual) return contextual;
+  }
   const accommodationDestination = topic === "hotel"
-    ? detectAccommodationDestination(latestUserMessage.content)
+    ? [...request.messages].reverse().filter((m) => m.role === "user").map((m) => detectAccommodationDestination(m.content)).find(Boolean) ?? detectAccommodationDestination(String(request.permittedProfile?.trip?.area ?? ""))
     : undefined;
 
   return {
@@ -142,5 +148,10 @@ export async function getAiGuideResponse(
       ? getDestinationAccommodationResponse(accommodationDestination, request.language)
       : demoResponses[topic][request.language],
     emergency: topic === "emergency",
+    grounding: accommodationDestination ? "illustrative_catalogue" : "demo",
+    notice: accommodationDestination ? catalogueNotice : "Prewritten demo guidance; current information is not verified.",
+    ...(accommodationDestination ? { recommendations: tourismRecords.filter((r) => r.type === "hotel" && r.location === accommodationDestination).map((r) => ({ ...r, reason: "Sample accommodation in your requested area." })) } : {}),
   };
 }
+
+export const demoProvider: AssistantProvider = { respond: getAiGuideResponse };

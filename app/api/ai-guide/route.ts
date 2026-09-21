@@ -1,4 +1,7 @@
 import { getAiGuideResponse } from "@/utils/ai-guide/service";
+import { respondWithContext } from "@/utils/ai-guide/gateway";
+import { boundedJson, RequestError } from "@/utils/http";
+import { allowRequest, anonymousKey, recordUsage, usageEvent } from "@/utils/ai-guide/operations";
 import {
   AI_GUIDE_ERROR_MESSAGES,
   AI_GUIDE_LIMITS,
@@ -16,28 +19,18 @@ function errorResponse(code: AiGuideErrorCode, message: string, status: number) 
 
 type AiGuideService = typeof getAiGuideResponse;
 
-export function createAiGuidePostHandler(service: AiGuideService = getAiGuideResponse) {
-  return async function post(request: Request) {
+export function createAiGuidePostHandler(service?: AiGuideService) {
+  async function post(request: Request) {
     const contentLength = Number(request.headers.get("content-length"));
     if (Number.isFinite(contentLength) && contentLength > AI_GUIDE_LIMITS.maxRequestBodyBytes) {
       return errorResponse("REQUEST_TOO_LARGE", AI_GUIDE_ERROR_MESSAGES.tooLarge, 413);
     }
 
-    let bodyText: string;
-    try {
-      bodyText = await request.text();
-    } catch {
-      return errorResponse("MALFORMED_JSON", AI_GUIDE_ERROR_MESSAGES.malformedJson, 400);
-    }
-
-    if (new TextEncoder().encode(bodyText).byteLength > AI_GUIDE_LIMITS.maxRequestBodyBytes) {
-      return errorResponse("REQUEST_TOO_LARGE", AI_GUIDE_ERROR_MESSAGES.tooLarge, 413);
-    }
-
     let body: unknown;
     try {
-      body = JSON.parse(bodyText);
-    } catch {
+      body = await boundedJson(request, AI_GUIDE_LIMITS.maxRequestBodyBytes);
+    } catch (error) {
+      if (error instanceof RequestError && error.status === 413) return errorResponse("REQUEST_TOO_LARGE", AI_GUIDE_ERROR_MESSAGES.tooLarge, 413);
       return errorResponse("MALFORMED_JSON", AI_GUIDE_ERROR_MESSAGES.malformedJson, 400);
     }
 
@@ -47,11 +40,21 @@ export function createAiGuidePostHandler(service: AiGuideService = getAiGuideRes
     }
 
     try {
-      const data = await service(validation.data);
+      const data = await (service ? service(validation.data) : respondWithContext(validation.data, request));
       return Response.json({ data } satisfies AiGuideSuccessResponse);
     } catch {
       return errorResponse("SERVICE_UNAVAILABLE", AI_GUIDE_ERROR_MESSAGES.unavailable, 503);
     }
+  }
+  return async (request: Request) => {
+    const start = Date.now();
+    const session = anonymousKey(request);
+    const response = allowRequest(session) ? await post(request) : errorResponse("SERVICE_UNAVAILABLE", "Please wait a minute before trying again.", 429);
+    response.headers.set("Cache-Control", "no-store");
+    if (response.status === 429) response.headers.set("Retry-After", "60");
+    const result = response.ok ? await response.clone().json() as AiGuideSuccessResponse : undefined;
+    recordUsage(usageEvent(response.status, start, session, result?.data.grounding === "illustrative_catalogue" ? "catalogue" : "demo"));
+    return response;
   };
 }
 
